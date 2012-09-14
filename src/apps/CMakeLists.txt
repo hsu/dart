@@ -16,7 +16,7 @@ foreach( APPDIR
 	exampleCollisionWithSkelton
 	#superCoolSimulation
 	HandSPD 
-	HandRedBall
+	#HandRedBall
 	cubes
 	exampleJointLimit
 	meshTest
@@ -28,6 +28,7 @@ foreach( APPDIR
 	#collisionProfiling
 	swinging
 	lowerBodyWalk 
+    manipulator
 )
     ADD_SUBDIRECTORY( ${APPDIR} )
 endforeach(APPDIR)
@@ -51,7 +52,7 @@ foreach( APPTARGET
 	exampleCollisionWithSkelton
 	superCoolSimulation
 	HandSPD
-	HandRedBall
+	#HandRedBall
 	cubes
 	exampleJointLimits
 	meshTest
@@ -60,6 +61,7 @@ foreach( APPTARGET
 	rightLeg
 	lowerBodyFreeFall 
 	collisionProfiling
+    manipulator
 	lowerBodyWalk)
     IF(TARGET ${APPTARGET})
         SET_TARGET_PROPERTIES( ${APPTARGET} PROPERTIES
