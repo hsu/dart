@@ -8,6 +8,7 @@ foreach(APPDIR
 	viewer
 	forwardSim
 	cubes
+	sensors
 	motionAnalysis
 	pdController
 	balance
