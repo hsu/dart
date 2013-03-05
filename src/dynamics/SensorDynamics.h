@@ -38,4 +38,24 @@
 #ifndef DYNAMICS_SENSOR_DYNAMICS_H
 #define DYNAMICS_SENSOR_DYNAMICS_H
 
+namespace dynamics{
+    /**
+    @brief SensorDynamics class represents a single sensor of the skeleton for dynamics
+    */
+    class SensorDynamics : public BodyNodeDynamics {
+    public:
+        enum WrapperType {
+          SCALAR,
+          VECTOR,
+          MATRIX,
+          CLOUD
+        };
+        enum ElementType {
+          SCALAR,
+          VECTOR,
+          STRING
+        };
+    };
+}
+
 #endif // #ifndef DYNAMICS_SENSOR_DYNAMICS_H
