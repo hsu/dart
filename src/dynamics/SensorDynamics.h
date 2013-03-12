@@ -45,15 +45,15 @@ namespace dynamics{
     class SensorDynamics : public BodyNodeDynamics {
     public:
         enum WrapperType {
-          SCALAR,
-          VECTOR,
-          MATRIX,
-          CLOUD
+          WT_SCALAR,
+          WT_VECTOR,
+          WT_MATRIX,
+          WT_CLOUD
         };
         enum ElementType {
-          SCALAR,
-          VECTOR,
-          STRING
+          ET_SCALAR,
+          ET_VECTOR,
+          ET_STRING
         };
     };
 }
