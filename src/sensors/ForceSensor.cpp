@@ -45,3 +45,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace kinematics;
+
+namespace sensors{
+	// static const dynamics::WrapperType
+}

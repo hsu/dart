@@ -1,6 +1,6 @@
 #include "MyWindow.h"
 #include "dynamics/BodyNodeDynamics.h"
-#include "dynamics/SensorDynamics.h"
+#include "sensors/SensorDynamics.h"
 #include "sensors/ForceSensor.h"
 #include "dynamics/ContactDynamics.h"
 #include "kinematics/Dof.h"

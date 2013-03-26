@@ -35,29 +35,31 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DYNAMICS_SENSOR_DYNAMICS_H
-#define DYNAMICS_SENSOR_DYNAMICS_H
+#ifndef SENSORS_SENSOR_DYNAMICS_H
+#define SENSORS_SENSOR_DYNAMICS_H
 
 #include "dynamics/BodyNodeDynamics.h"
 
-namespace dynamics{
+namespace sensors{
+
+    enum WrapperType {
+      WT_SCALAR,
+      WT_VECTOR,
+      WT_MATRIX,
+      WT_CLOUD
+    };
+    enum ElementType {
+      ET_SCALAR,
+      ET_VECTOR,
+      ET_STRING
+    };
+
     /**
     @brief SensorDynamics class represents a single sensor of the skeleton for dynamics
     */
-    class SensorDynamics : public BodyNodeDynamics {
+    class SensorDynamics : public dynamics::BodyNodeDynamics {
     public:
-        enum WrapperType {
-          WT_SCALAR,
-          WT_VECTOR,
-          WT_MATRIX,
-          WT_CLOUD
-        };
-        enum ElementType {
-          ET_SCALAR,
-          ET_VECTOR,
-          ET_STRING
-        };
     };
 }
 
-#endif // #ifndef DYNAMICS_SENSOR_DYNAMICS_H
+#endif // #ifndef SENSORS_SENSOR_DYNAMICS_H

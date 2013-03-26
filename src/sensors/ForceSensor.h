@@ -38,14 +38,16 @@
 #ifndef SENSORS_FORCE_SENSOR_H
 #define SENSORS_FORCE_SENSOR_H
 
-#include "dynamics/SensorDynamics.h"
+#include "sensors/SensorDynamics.h"
 
 namespace sensors{
     /**
     @brief ForceSensor class represents a force sensor at a given point on a link
     */
-    class ForceSensor : public dynamics::SensorDynamics {
+    class ForceSensor : public SensorDynamics {
     public:
+      static const WrapperType WRAPPER_TYPE;
+      static const WrapperType ELEMENT_TYPE;
     };
 }
 
