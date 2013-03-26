@@ -80,7 +80,6 @@ namespace dynamics {
                     mConstrForces[i] = VectorXd::Zero(mSkels[i]->getNumDofs());
             }
 
-            mMInv = MatrixXd::Zero(rows, cols);
             mTauStar = VectorXd::Zero(rows);
 
             // Initialize the index vector:
@@ -117,27 +116,14 @@ namespace dynamics {
                     continue;
 
                 VectorXd tau = mSkels[i]->getExternalForces() + mSkels[i]->getInternalForces();
-                VectorXd tauStar = (mSkels[i]->getMassMatrix() * mSkels[i]->getQDotVector()) - (mDt * (mSkels[i]->getCombinedVector() - tau));
+                VectorXd tauStar = mSkels[i]->getMassMatrix() * mSkels[i]->getQDotVector();
+                tauStar.noalias() -= (mDt * (mSkels[i]->getCombinedVector() - tau));
                 mTauStar.segment(startRow, tauStar.rows()) = tauStar;
                 startRow += tauStar.rows();
             }
         }
 
-        void ContactDynamics::updateMassMat() {
-            int startRow = 0;
-            int startCol = 0;
-            for (int i = 0; i < getNumSkels(); i++) {
-                if (mSkels[i]->getImmobileState())
-                    continue;
-                MatrixXd skelMassInv = mSkels[i]->getInvMassMatrix();
-                mMInv.block(startRow, startCol, skelMassInv.rows(), skelMassInv.cols()) = skelMassInv;
-                startRow+= skelMassInv.rows();
-                startCol+= skelMassInv.cols();
-            }
-        }
-
         void ContactDynamics::fillMatrices() {
-            updateMassMat();
             updateTauStar();
 
             updateNBMatrices();
@@ -145,27 +131,37 @@ namespace dynamics {
             //        updateBasisMatrix();
 
             MatrixXd E = getContactMatrix();
-            MatrixXd mu = getMuMatrix();
 
-            // Construct the intermediary blocks.
-            MatrixXd Ntranspose = mN.transpose();
-            MatrixXd Btranspose = mB.transpose();
-            MatrixXd nTmInv = Ntranspose * mMInv;
-            MatrixXd bTmInv = Btranspose * mMInv;
-
-            // Construct
             int c = getNumContacts();
             int cd = c * mNumDir;
+
+            // Construct the intermediary blocks.
+            // nTmInv = mN.transpose() * MInv
+            // bTmInv = mB.transpose() * MInv
+            // Where MInv is the imaginary diagonal block matrix that combines the inverted mass matrices of all skeletons.
+            // Muliplying each block independently is more efficient that multiplyting the whole MInv matrix.
+            MatrixXd nTmInv(c, getNumTotalDofs());
+            MatrixXd bTmInv(cd, getNumTotalDofs());
+            for (int i = 0; i < getNumSkels(); i++) {
+               if (mSkels[i]->getImmobileState())
+                   continue;
+               const MatrixXd skelMInv = mSkels[i]->getInvMassMatrix();
+               const int skelNumDofs = mSkels[i]->getNumDofs();
+               nTmInv.middleCols(mIndices[i], skelNumDofs).noalias() = mN.transpose().middleCols(mIndices[i], skelNumDofs) * skelMInv;
+               bTmInv.middleCols(mIndices[i], skelNumDofs).noalias() = mB.transpose().middleCols(mIndices[i], skelNumDofs) * skelMInv;
+            }
+
+            // Construct
             int dimA = c * (2 + mNumDir); // dimension of A is c + cd + c
             mA.resize(dimA, dimA);
-            mA.topLeftCorner(c, c) = nTmInv * mN;
-            mA.block(0, c, c, cd) = nTmInv * mB;
-            mA.block(c, 0, cd, c) = bTmInv * mN;
-            mA.block(c, c, cd, cd) = bTmInv * mB;
+            mA.topLeftCorner(c, c).noalias() = nTmInv * mN;
+            mA.block(0, c, c, cd).noalias() = nTmInv * mB;
+            mA.block(c, 0, cd, c).noalias() = bTmInv * mN;
+            mA.block(c, c, cd, cd).noalias() = bTmInv * mB;
             //        mA.block(c, c + cd, cd, c) = E * (mDt * mDt);
             mA.block(c, c + cd, cd, c) = E;
             //        mA.block(c + cd, 0, c, c) = mu * (mDt * mDt);
-            mA.bottomLeftCorner(c, c) = mu; // Note: mu is a diagonal matrix, but we also set the surrounding zeros
+            mA.bottomLeftCorner(c, c) = getMuMatrix(); // Note: mu is a diagonal matrix, but we also set the surrounding zeros
             //        mA.block(c + cd, c, c, cd) = -E.transpose() * (mDt * mDt);
             mA.block(c + cd, c, c, cd) = -E.transpose();
             mA.topRightCorner(c, c).setZero();
@@ -191,11 +187,11 @@ namespace dynamics {
                 rowStart += nDof;
             }
             */
-            //mQBar.block(0, 0, c, 1) = Ntranspose * MinvTauStar;
-            //mQBar.block(c, 0, cd, 1) = Btranspose * MinvTauStar;
+            //mQBar.block(0, 0, c, 1) = mN.transpose() * MinvTauStar;
+            //mQBar.block(c, 0, cd, 1) = mB.transpose() * MinvTauStar;
 
-            mQBar.head(c) = nTmInv * mTauStar;
-            mQBar.segment(c,cd) = bTmInv * mTauStar;
+            mQBar.head(c).noalias() = nTmInv * mTauStar;
+            mQBar.segment(c,cd).noalias() = bTmInv * mTauStar;
             mQBar /= mDt;
         }
 
@@ -206,15 +202,14 @@ namespace dynamics {
         }
 
         void ContactDynamics::applySolution() {
-            int c = getNumContacts();
+            const int c = getNumContacts();
 
             // First compute the external forces
-            int nRows = mMInv.rows(); // a hacky way to get the dimension
-            VectorXd forces(VectorXd::Zero(nRows));
             VectorXd f_n = mX.head(c);
             VectorXd f_d = mX.segment(c, c * mNumDir);
             VectorXd lambda = mX.tail(c);
-            forces = (mN * f_n) + (mB * f_d);
+            VectorXd forces = mN * f_n;
+            forces.noalias() += mB * f_d;
 
             // Next, apply the external forces skeleton by skeleton.
             int startRow = 0;
@@ -228,7 +223,8 @@ namespace dynamics {
 
             for (int i = 0; i < c; i++) {
                 ContactPoint& contact = mCollisionChecker->getContact(i);
-                contact.force = getTangentBasisMatrix(contact.point, contact.normal) * f_d.segment(i * mNumDir, mNumDir) + contact.normal * f_n[i];
+                contact.force.noalias() = getTangentBasisMatrix(contact.point, contact.normal) * f_d.segment(i * mNumDir, mNumDir);
+                contact.force += contact.normal * f_n[i];
             }
         }
 
@@ -264,9 +260,9 @@ namespace dynamics {
                     int NDOF1 = c.bd1->getSkel()->getNumDofs();
                     //    Vector3d N21 = c.normal;
                     MatrixXd J21t = getJacobian(c.bd1, p);
-                    mN.block(index1, i, NDOF1, 1) = J21t * N21;
+                    mN.block(index1, i, NDOF1, 1).noalias() = J21t * N21;
                     //B21 = getTangentBasisMatrix(p, N21);
-                    mB.block(index1, i * getNumContactDirections(), NDOF1, getNumContactDirections()) = J21t * B21;
+                    mB.block(index1, i * getNumContactDirections(), NDOF1, getNumContactDirections()).noalias() = J21t * B21;
                 }
 
                 if (!mSkels[skelID2]->getImmobileState()) {
@@ -278,8 +274,8 @@ namespace dynamics {
                     //else
                     //   B12 = -B21;
                     MatrixXd J12t = getJacobian(c.bd2, p);
-                    mN.block(index2, i, NDOF2, 1) = J12t * N12;
-                    mB.block(index2, i * getNumContactDirections(), NDOF2, getNumContactDirections()) = J12t * B12;
+                    mN.block(index2, i, NDOF2, 1).noalias() = J12t * N12;
+                    mB.block(index2, i * getNumContactDirections(), NDOF2, getNumContactDirections()).noalias() = J12t * B12;
 
                 }
             }
@@ -354,10 +350,10 @@ namespace dynamics {
             int iter = (mNumDir % 2 == 0) ? mNumDir / 2 : mNumDir;
             for (int i = 0; i < iter; i++) {
                 Vector3d basis = Quaterniond(AngleAxisd(i * angle, n)) * tangent;
-                T.block(0, i, 3, 1) = basis;
+                T.block<3,1>(0, i) = basis;
 
                 if (mNumDir % 2 == 0) {
-                    T.block(0, i + iter, 3, 1) = -basis;
+                    T.block<3,1>(0, i + iter) = -basis;
                 }
             }
             return T;

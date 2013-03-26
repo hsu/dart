@@ -224,7 +224,7 @@ namespace robotics {
             continue;
         int start = mIndices[i] * 2;
         int size = getSkeleton(i)->getNumDofs();
-        VectorXd qddot = getSkeleton(i)->getMassMatrix().fullPivHouseholderQr().solve(
+        VectorXd qddot = getSkeleton(i)->getMassMatrix().ldlt().solve(
             - getSkeleton(i)->getCombinedVector() + getSkeleton(i)->getExternalForces()
             + mCollisionHandle->getConstraintForce(i) + getSkeleton(i)->getInternalForces());
 
@@ -248,7 +248,7 @@ void World::setState(const VectorXd &newState) {
             getSkeleton(i)->setPose(pose, true, false);
         } else {
             // need to update first derivatives for collision
-            getSkeleton(i)->setPose(pose, false, true);
+            getSkeleton(i)->setPose(pose, false, false);
             getSkeleton(i)->computeDynamics(mGravity, qDot, true);
         }
     }
