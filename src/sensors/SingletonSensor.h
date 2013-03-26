@@ -35,17 +35,17 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SENSORS_FORCE_SENSOR_H
-#define SENSORS_FORCE_SENSOR_H
+#ifndef SENSORS_SINGLETON_SENSOR_H
+#define SENSORS_SINGLETON_SENSOR_H
 
-#include "sensors/SingletonSensor.h"
+#include "sensors/Sensor.h"
 
 namespace sensors{
     /**
-    @brief ForceSensor class represents a force sensor at a given point on a link
+    @brief SingletonSensor class is an abstract sensor type that returns some kind of scalar
     */
-    class ForceSensor : public SingletonSensor {
+    class SingletonSensor : public Sensor {
     };
 }
 
-#endif // #ifndef SENSORS_FORCE_SENSOR_H
+#endif // #ifndef SENSORS_SINGLETON_SENSOR_H

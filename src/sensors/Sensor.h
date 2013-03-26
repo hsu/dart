@@ -35,17 +35,30 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SENSORS_FORCE_SENSOR_H
-#define SENSORS_FORCE_SENSOR_H
+#ifndef SENSORS_SENSOR_H
+#define SENSORS_SENSOR_H
 
-#include "sensors/SingletonSensor.h"
+#include "dynamics/BodyNodeDynamics.h"
 
 namespace sensors{
+
+    // enum WrapperType {
+    //   WT_SINGLETON,
+    //   WT_VECTOR,
+    //   WT_MATRIX,
+    //   WT_CLOUD
+    // };
+    // enum ElementType {
+    //   ET_SCALAR,
+    //   ET_STRING
+    // };
+
     /**
-    @brief ForceSensor class represents a force sensor at a given point on a link
+    @brief Sensor class represents a single sensor of the skeleton for dynamics
     */
-    class ForceSensor : public SingletonSensor {
+    class Sensor : public dynamics::BodyNodeDynamics {
+    public:
     };
 }
 
-#endif // #ifndef SENSORS_FORCE_SENSOR_H
+#endif // #ifndef SENSORS_SENSOR_H
