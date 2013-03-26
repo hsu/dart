@@ -35,6 +35,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sensors/Sensor.h"
 #include "dynamics/BodyNodeDynamics.h"
 #include "kinematics/Joint.h"
 #include "kinematics/Shape.h"
@@ -46,3 +47,11 @@ using namespace std;
 using namespace Eigen;
 using namespace kinematics;
 
+namespace sensors{
+    Sensor::Sensor( const char *_name, const dynamics::BodyNodeDynamics *_parent ) : dynamics::BodyNodeDynamics(_name){
+      mParentBodyNode = _parent;
+    }
+
+    Sensor::~Sensor(){
+    }
+}

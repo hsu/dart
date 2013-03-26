@@ -58,6 +58,10 @@ namespace sensors{
     */
     class Sensor : public dynamics::BodyNodeDynamics {
     public:
+      Sensor(const char *_name = NULL, const dynamics::BodyNodeDynamics *_parent = NULL); ///< Default constructor. The name can be up to 128
+      virtual ~Sensor();
+
+      const dynamics::BodyNodeDynamics * mParentBodyNode;    ///< What body node are we sensing from?
     };
 }
 
