@@ -38,6 +38,8 @@
 #ifndef DYNAMICS_SENSOR_DYNAMICS_H
 #define DYNAMICS_SENSOR_DYNAMICS_H
 
+#include "dynamics/BodyNodeDynamics.h"
+
 namespace dynamics{
     /**
     @brief SensorDynamics class represents a single sensor of the skeleton for dynamics

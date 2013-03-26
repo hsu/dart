@@ -35,7 +35,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BodyNodeDynamics.h"
+#include "dynamics/BodyNodeDynamics.h"
 #include "kinematics/Joint.h"
 #include "kinematics/Shape.h"
 #include "kinematics/Transformation.h"
