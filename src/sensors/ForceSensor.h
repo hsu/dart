@@ -45,6 +45,8 @@ namespace sensors{
     @brief ForceSensor class represents a force sensor at a given point on a link
     */
     class ForceSensor : public SingletonSensor {
+    public:
+        Eigen::Vector3d pollLatest();   ///< returns the latest sensor value
     };
 }
 

@@ -36,6 +36,7 @@
  */
 
 // #include "dynamics/SensorDynamics.h"
+#include "sensors/ForceSensor.h"
 #include "kinematics/Joint.h"
 #include "kinematics/Shape.h"
 #include "kinematics/Transformation.h"
@@ -47,4 +48,14 @@ using namespace Eigen;
 using namespace kinematics;
 
 namespace sensors{
+    // ForceSensor::ForceSensor( const char *_name, const dynamics::BodyNodeDynamics *_parent ) : dynamics::SingletonSensor(_name){
+    //   mParentBodyNode = _parent;
+    // }
+
+    // ForceSensor::~ForceSensor(){
+    // }
+
+    Eigen::Vector3d ForceSensor::pollLatest(){
+      return mExtForceBody;
+    }
 }
