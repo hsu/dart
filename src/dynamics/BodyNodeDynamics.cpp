@@ -67,6 +67,7 @@ namespace dynamics{
         if(mInitializedInvDyn) return;
         BodyNode::init();
 
+        mM = MatrixXd::Zero(getNumDependentDofs(), getNumDependentDofs());
         mJwJoint = MatrixXd::Zero(3, getNumDependentDofs());
         mJwDotJoint = MatrixXd::Zero(3, getNumDependentDofs());
         mVelBody.setZero();
@@ -377,8 +378,9 @@ namespace dynamics{
     }
 
     void BodyNodeDynamics::evalMassMatrix() {
-        mM.noalias() = getMass() * mJv.transpose() * mJv;
-        mM.noalias() += mJw.transpose() * mIc * mJw;
+        mM.triangularView<Upper>() = getMass() * mJv.transpose() * mJv;
+        mM.triangularView<Upper>() += mJw.transpose() * mIc * mJw;
+        mM.triangularView<StrictlyLower>() = mM.transpose();
     }
 
     void BodyNodeDynamics::evalCoriolisMatrix(const VectorXd &_qDotSkel){
