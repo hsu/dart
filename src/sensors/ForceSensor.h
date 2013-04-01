@@ -39,6 +39,7 @@
 #define SENSORS_FORCE_SENSOR_H
 
 #include "sensors/SingletonSensor.h"
+#include "dynamics/SkeletonDynamics.h"
 
 namespace sensors{
     /**
@@ -46,7 +47,14 @@ namespace sensors{
     */
     class ForceSensor : public SingletonSensor {
     public:
-        Eigen::Vector3d pollLatest();   ///< returns the latest sensor value
+        ForceSensor( const char *_name,
+          const dynamics::SkeletonDynamics *_skeleton,
+          const dynamics::BodyNodeDynamics *_parent );
+        ~ForceSensor();
+
+        Eigen::VectorXd pollLatest();   ///< returns the latest sensor value
+
+        const dynamics::SkeletonDynamics * mSkeleton;    ///< What skeleton are we observing?
     };
 }
 

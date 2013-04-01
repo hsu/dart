@@ -41,18 +41,6 @@
 #include "dynamics/BodyNodeDynamics.h"
 
 namespace sensors{
-
-    // enum WrapperType {
-    //   WT_SINGLETON,
-    //   WT_VECTOR,
-    //   WT_MATRIX,
-    //   WT_CLOUD
-    // };
-    // enum ElementType {
-    //   ET_SCALAR,
-    //   ET_STRING
-    // };
-
     /**
     @brief Sensor class represents a single sensor of the skeleton for dynamics
     */

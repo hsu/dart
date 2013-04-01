@@ -7,6 +7,7 @@
 #include "integration/RK4Integrator.h"
 #include "collision/CollisionSkeleton.h"
 #include "dynamics/SkeletonDynamics.h"
+#include "sensors/ForceSensor.h"
 
 namespace dynamics{
     class ContactDynamics;
@@ -19,7 +20,7 @@ public:
         mBackground[1] = 1.0;
         mBackground[2] = 1.0;
         mBackground[3] = 1.0;
-		
+
         mSim = false;
         mPlay = false;
         mSimFrame = 0;
@@ -28,7 +29,7 @@ public:
 
         mPersp = 45.f;
         mTrans[1] = 300.f;
-    
+
         mGravity = Eigen::Vector3d(0.0, -9.8, 0.0);
         mTimeStep = 1.0/1000.0;
         mForce = Eigen::Vector3d::Zero();
@@ -46,7 +47,10 @@ public:
             }
             va_end(ap);
         }
-        
+
+        dynamics::BodyNodeDynamics *nodeParent = static_cast<dynamics::BodyNodeDynamics*>(mSkels[1]->mRoot);
+        mForceSensor = new sensors::ForceSensor("Force sensor 1", mSkels[1], nodeParent);
+
         int sumNDofs = 0;
         mIndices.push_back(sumNDofs);
         for (unsigned int i = 0; i < mSkels.size(); i++) {
@@ -64,9 +68,9 @@ public:
     // Needed for integration
     virtual Eigen::VectorXd getState();
     virtual Eigen::VectorXd evalDeriv();
-    virtual void setState(const Eigen::VectorXd &state);	
+    virtual void setState(const Eigen::VectorXd &state);
 
- protected:	
+ protected:
     int mSimFrame;
     bool mSim;
     int mPlayFrame;
@@ -83,6 +87,8 @@ public:
     Eigen::Vector3d mGravity;
     Eigen::Vector3d mForce;
     std::vector<int> mIndices;
+
+    sensors::ForceSensor *mForceSensor;
 
     void initDyn();
     void bake();

@@ -47,4 +47,9 @@ using namespace Eigen;
 using namespace kinematics;
 
 namespace sensors{
+    SingletonSensor::SingletonSensor( const char *_name, const dynamics::BodyNodeDynamics *_parent ) : Sensor(_name, _parent){
+    }
+
+    SingletonSensor::~SingletonSensor(){
+    }
 }

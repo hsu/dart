@@ -45,6 +45,9 @@ namespace sensors{
     @brief SingletonSensor class is an abstract sensor type that returns some kind of scalar
     */
     class SingletonSensor : public Sensor {
+    public:
+        SingletonSensor( const char *_name, const dynamics::BodyNodeDynamics *_parent );
+        ~SingletonSensor();
     };
 }
 

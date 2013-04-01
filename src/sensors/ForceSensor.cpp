@@ -48,14 +48,17 @@ using namespace Eigen;
 using namespace kinematics;
 
 namespace sensors{
-    // ForceSensor::ForceSensor( const char *_name, const dynamics::BodyNodeDynamics *_parent ) : dynamics::SingletonSensor(_name){
-    //   mParentBodyNode = _parent;
-    // }
+    ForceSensor::ForceSensor( const char *_name,
+        const dynamics::SkeletonDynamics *_skeleton,
+        const dynamics::BodyNodeDynamics *_parent ) : SingletonSensor(_name, _parent){
+      mSkeleton = _skeleton;
+    }
 
-    // ForceSensor::~ForceSensor(){
-    // }
+    ForceSensor::~ForceSensor(){
+    }
 
-    Eigen::Vector3d ForceSensor::pollLatest(){
-      return mExtForceBody;
+    Eigen::VectorXd ForceSensor::pollLatest(){
+      // return mParentBodyNode->mExtForceBody;
+      return mSkeleton->getExternalForces();
     }
 }

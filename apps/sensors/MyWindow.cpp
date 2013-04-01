@@ -41,7 +41,7 @@ void MyWindow::initDyn()
 }
 
 VectorXd MyWindow::getState() {
-    VectorXd state(mIndices.back() * 2);    
+    VectorXd state(mIndices.back() * 2);
     for (unsigned int i = 0; i < mSkels.size(); i++) {
         int start = mIndices[i] * 2;
         int size = mDofs[i].size();
@@ -67,7 +67,7 @@ VectorXd MyWindow::evalDeriv() {
     mCollisionHandle->applyContactForces();
 
     // compute derivatives for integration
-    VectorXd deriv = VectorXd::Zero(mIndices.back() * 2);    
+    VectorXd deriv = VectorXd::Zero(mIndices.back() * 2);
     for (unsigned int i = 0; i < mSkels.size(); i++) {
         // skip immobile objects in forward simulation
         if (mSkels[i]->getImmobileState())
@@ -129,7 +129,7 @@ void MyWindow::draw()
                 mSkels[i]->setPose(mBakedStates[mPlayFrame].segment(start, size), false, false);
             }
             if (mShowMarkers) {
-                int sumDofs = mIndices[mSkels.size()]; 
+                int sumDofs = mIndices[mSkels.size()];
                 int nContact = (mBakedStates[mPlayFrame].size() - sumDofs) / 6;
                 for (int i = 0; i < nContact; i++) {
                     Vector3d v = mBakedStates[mPlayFrame].segment(sumDofs + i * 6, 3);
@@ -163,19 +163,27 @@ void MyWindow::draw()
             }
         }
     }
-    
+
     for (unsigned int i = 0; i < mSkels.size(); i++)
         mSkels[i]->draw(mRI);
-            
+
     // display the frame count in 2D text
     char buff[64];
-    if (!mSim) 
+    if (!mSim)
         sprintf(buff, "%d", mPlayFrame);
     else
         sprintf(buff, "%d", mSimFrame);
+
+    char forceBuff[64];
+    Eigen::VectorXd force = mForceSensor->pollLatest();
+    // Eigen::VectorXd force = mSkels[1]->getExternalForces();
+    sprintf(forceBuff, "<< %f, %f, %f >>", force[0], force[1], force[2]);
+    string frame2(forceBuff);
+
     string frame(buff);
     glColor3f(0.0,0.0,0.0);
     yui::drawStringOnScreen(0.02f,0.02f,frame);
+    yui::drawStringOnScreen(0.2f,0.02f,frame2);
     glEnable(GL_LIGHTING);
 }
 
