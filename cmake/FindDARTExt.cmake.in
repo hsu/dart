@@ -101,7 +101,7 @@ if(NOT EXISTS ${FCL_INCLUDEDIR}/fcl/collision.h)
     pkg_check_modules(PC_FCL fcl)
     unset(FCL_INCLUDEDIR)
     find_path(FCL_INCLUDEDIR fcl/collision.h 
-        PATHS ${SYS_INSTALL_PREFIX}/include ${PC_FCL_INCLUDEDIR} PATH_SUFFIXES fcl)
+        PATHS ${SYS_INSTALL_PREFIX}/include ${PC_FCL_INCLUDE_DIRS} PATH_SUFFIXES fcl)
     
     if(NOT EXISTS ${FCL_INCLUDEDIR}/fcl/collision.h)
         message(STATUS "Could not find fcl")
