@@ -93,6 +93,7 @@ find_path(CCD_INCLUDEDIR ccd/ccd.h
     endif()
 endif()
 message(STATUS "CCD_INCLUDEDIR = ${CCD_INCLUDEDIR}")
+message(STATUS "CCD_LIBRARYDIR = ${PC_CCD_LIBRARY_DIRS}")
 set(CCD_LIBRARIES ccd)
 
 # FCL
@@ -100,9 +101,8 @@ set(FCL_INCLUDEDIR ${DARTExt_INCLUDEDIR})
 if(NOT EXISTS ${FCL_INCLUDEDIR}/fcl/collision.h)
     pkg_check_modules(PC_FCL fcl)
     unset(FCL_INCLUDEDIR)
-    find_path(FCL_INCLUDEDIR fcl/collision.h
-        PATHS ${SYS_INSTALL_PREFIX}/include ${PC_FCL_INCLUDEDIR} PATH_SUFFIXES fcl)
-    
+    find_path(FCL_INCLUDEDIR fcl/collision.h 
+        PATHS ${SYS_INSTALL_PREFIX}/include ${PC_FCL_INCLUDE_DIRS} PATH_SUFFIXES fcl)
     if(NOT EXISTS ${FCL_INCLUDEDIR}/fcl/collision.h)
         message(STATUS "Could not find fcl")
         set(DARTExt_FOUND FALSE)
@@ -186,7 +186,7 @@ set(urdfdom_LIBRARIES urdfdom_sensor urdfdom_model_state urdfdom_model urdfdom_w
 # It can be downloaded from here https://github.com/ros/console_bridge
 
 
-set(DARTExt_LIBRARY_DIRS "${SYS_INSTALL_PREFIX}/lib" ${Boost_LIBRARY_DIRS} )
+set(DARTExt_LIBRARY_DIRS "${SYS_INSTALL_PREFIX}/lib" ${Boost_LIBRARY_DIRS} ${PC_CCD_LIBRARY_DIRS})
 
 set(DARTExt_LIBS ${FCL_LIBRARIES} ${TINYXML_LIBRARIES} ${TINYXML2_LIBRARIES} ${urdfdom_LIBRARIES} )
 set(DARTExt_LIBS_NO_DEBUG ${CCD_LIBRARIES} ${ASSIMP_LIBRARIES} ${GLUT_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${OPENGL_LIBRARIES})
