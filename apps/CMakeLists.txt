@@ -17,7 +17,8 @@ foreach(APPDIR
     #closedLoop
     #drawRRT
     testBed
-    )
+    #spheres
+	)
     add_subdirectory(${APPDIR})
     if(WIN32)
         if(TARGET ${APPTARGET})

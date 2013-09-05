@@ -91,7 +91,7 @@ link_directories(${DARTExt_LIBRARY_DIRS})
 
 add_subdirectory(src)
 enable_testing()
-add_subdirectory(unittests)
+# add_subdirectory(unittests)
 add_subdirectory(apps)
 
 ###############
