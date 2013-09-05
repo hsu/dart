@@ -10,13 +10,13 @@ foreach(APPDIR
 	motionAnalysis
 	pdController
 	balance
-	ik
+	# ik
 	hybrid
 	hanging
 	hardcodedDesign
 	closedLoop
-	drawRRT
-	spheres
+	# drawRRT
+	# spheres
 	)
     add_subdirectory(${APPDIR})
     if(WIN32)

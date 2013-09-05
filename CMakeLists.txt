@@ -96,7 +96,7 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 add_subdirectory(src)
 
 enable_testing()
-add_subdirectory(unittests)
+# add_subdirectory(unittests)
 add_subdirectory(apps)
 
 ###############
