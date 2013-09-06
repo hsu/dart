@@ -17,4 +17,4 @@ set(DART_INCLUDE_DIRS
 
 set(DART_LIBRARY_DIRS "@CMAKE_INSTALL_PREFIX@/lib" ${DARTExt_LIBRARY_DIRS})
 
-set(DART_LIBRARIES optimized dart debug dartd ${DARTExt_LIBRARIES})
+set(DART_LIBRARIES optimized dart dart_collision dart_dynamics dart_integration dart_constraint dart_lcpsolver dart_math dart_renderer dart_simulation dart_utils dart_common dart_yui debug dartd ${DARTExt_LIBRARIES})

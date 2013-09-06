@@ -8,5 +8,5 @@ Name: @PROJECT_NAME@
 Description: @PKG_DESC@
 Version: @DART_VERSION@
 Requires: @PKG_EXTERNAL_DEPS@
-Libs: -L${libdir} -ldart
+Libs: -L${libdir} -ldart -ldart_collision -ldart_dynamics -ldart_integration -ldart_constraint -ldart_lcpsolver -ldart_math -ldart_renderer -ldart_simulation -ldart_utils -ldart_common -ldart_yui
 Cflags: @CMAKE_CXX_FLAGS@
