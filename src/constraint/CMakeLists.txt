@@ -6,8 +6,8 @@ file(GLOB_RECURSE dart_hdrs *.h *.hpp)
 add_library(dart_constraint ${dart_srcs} ${dart_hdrs})
 target_link_libraries(dart_constraint dart_collision dart_lcpsolver)
 target_link_libraries(dart_constraint ${DARTExt_LIBRARIES})
-set_target_properties(dart_constraint PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")
+set_target_properties(dart_constraint PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 if(MSVC)
     set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS_RELEASE "/LTCG")
 endif()

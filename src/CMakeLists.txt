@@ -25,10 +25,10 @@ add_subdirectory(yui)
 add_library(dart SHARED collision dynamics integration constraint lcpsolver math renderer simulation utils common yui)
 set_target_properties(dart PROPERTIES LINKER_LANGUAGE C)
 target_link_libraries(dart dart_collision dart_dynamics dart_integration dart_constraint dart_lcpsolver dart_math dart_renderer dart_simulation dart_utils dart_common dart_yui)
-
 target_link_libraries(dart ${DARTExt_LIBRARIES})
 set_target_properties(dart PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+
 if(MSVC)
     set_target_properties(${target} PROPERTIES STATIC_LIBRARY_FLAGS_RELEASE "/LTCG")
 endif()
