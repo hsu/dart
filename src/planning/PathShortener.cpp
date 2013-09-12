@@ -1,21 +1,23 @@
 #include "PathShortener.h"
 #include "simulation/World.h"
 #include "RRT.h"
-#include "dynamics/ContactDynamics.h"
 #include "collision/CollisionDetector.h"
-#include "dynamics/SkeletonDynamics.h"
+#include "dynamics/Skeleton.h"
+#include <ctime>
 
 using namespace std;
 using namespace Eigen;
+using namespace dart;
 using namespace simulation;
 
 #define RAND12(N1,N2) N1 + ((N2-N1) * ((double)rand() / ((double)RAND_MAX + 1))) // random # between N&M
 
+namespace dart {
 namespace planning {
 
 PathShortener::PathShortener() {}
 
-PathShortener::PathShortener(World* world, dynamics::SkeletonDynamics* robot, const vector<int> &dofs, double stepSize) :
+PathShortener::PathShortener(World* world, dynamics::Skeleton* robot, const vector<int> &dofs, double stepSize) :
    world(world),
    robot(robot),
    dofs(dofs),
@@ -101,4 +103,6 @@ bool PathShortener::segmentCollisionFree(list<VectorXd> &intermediatePoints, con
 		return false;
 	}
 }
-}
+
+} // namespace planning
+} // namespace dart

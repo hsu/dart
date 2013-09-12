@@ -35,8 +35,8 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef COLLISION_FCL_CONLLISION_DETECTOR_H
-#define COLLISION_FCL_CONLLISION_DETECTOR_H
+#ifndef DART_COLLISION_FCL_CONLLISION_DETECTOR_H
+#define DART_COLLISION_FCL_CONLLISION_DETECTOR_H
 
 #include <vector>
 #include <map>
@@ -44,14 +44,13 @@
 #include <fcl/collision.h>
 #include "collision/CollisionDetector.h"
 
-namespace collision
-{
+namespace dart {
+namespace collision {
 
 class FCLCollisionNode;
 
 /// @brief
-class FCLCollisionDetector : public CollisionDetector
-{
+class FCLCollisionDetector : public CollisionDetector {
 public:
     /// @brief
     FCLCollisionDetector();
@@ -60,17 +59,11 @@ public:
     virtual ~FCLCollisionDetector();
 
     // Documentation inherited
-    virtual CollisionNode* createCollisionNode(kinematics::BodyNode* _bodyNode);
+    virtual CollisionNode* createCollisionNode(dynamics::BodyNode* _bodyNode);
 
     // Documentation inherited
     virtual bool checkCollision(bool _checkAllCollisions,
                                 bool _calculateContactPoints);
-
-    /// @brief
-    int getNumMaxContacts() const { return mNumMaxContacts; }
-
-    /// @brief
-    void setNumMaxContacts(int _num) { mNumMaxContacts = _num; }
 
     CollisionNode* findCollisionNode(
             const fcl::CollisionGeometry* _fclCollGeom) const;
@@ -79,12 +72,9 @@ protected:
     virtual bool checkCollision(CollisionNode* _node1,
                                 CollisionNode* _node2,
                                 bool _calculateContactPoints);
-
-private:
-    /// @brief
-    int mNumMaxContacts;
 };
 
 } // namespace collision
+} // namespace dart
 
-#endif // COLLISION_FCL_CONLLISION_DETECTOR_H
+#endif // #ifndef DART_COLLISION_FCL_CONLLISION_DETECTOR_H
