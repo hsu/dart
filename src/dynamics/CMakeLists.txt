@@ -4,7 +4,7 @@ file(GLOB_RECURSE dart_hdrs *.h *.hpp)
 
 # Library 
 add_library(dart_dynamics ${dart_srcs} ${dart_hdrs})
-target_link_libraries(dart_dynamics dart_collision)
+target_link_libraries(dart_dynamics dart_common dart_math dart_collision)
 target_link_libraries(dart_dynamics ${DARTExt_LIBRARIES})
 set_target_properties(dart_dynamics PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")

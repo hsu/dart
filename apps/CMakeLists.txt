@@ -15,7 +15,7 @@ foreach(APPDIR
     #hanging
     hardcodedDesign
     #closedLoop
-    drawRRT
+    #drawRRT
     testBed
     #spheres
     )
