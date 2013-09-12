@@ -49,9 +49,9 @@ void ConstraintDynamics::computeConstraintForces() {
         if (mSkels[i]->getImmobileState() || !mSkels[i]->getJointLimitState())
             continue;
         for (int j = 0; j < mSkels[i]->getDOF(); j++) {
-            double val = mSkels[i]->getDof(j)->get_q();
-            double ub = mSkels[i]->getDof(j)->get_qMax();
-            double lb = mSkels[i]->getDof(j)->get_qMin();
+            double val = mSkels[i]->getGenCoord(j)->get_q();
+            double ub = mSkels[i]->getGenCoord(j)->get_qMax();
+            double lb = mSkels[i]->getGenCoord(j)->get_qMin();
             if (val >= ub){
                 mLimitingDofIndex.push_back(mIndices[i] + j + 1);
                 //        cout << "Skeleton " << i << " Dof " << j << " hits upper bound" << endl;

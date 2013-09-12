@@ -35,7 +35,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "dynamics/System.h"
+#include "dynamics/GenCoordSystem.h"
 #include "integration/EulerIntegrator.h"
 
 namespace dart {
@@ -55,16 +55,6 @@ void EulerIntegrator::integrate(IntegrableSystem* system, double dt) const
     // Explicit Euler Method
     Eigen::VectorXd deriv = system->evalDeriv();
     system->setState(system->getState() + (dt * deriv));
-
-    // Semi-implicit Euler Method
-//    int n = system->getState().size() / 2;
-//    VectorXd deriv = system->evalDeriv();
-//    VectorXd newState = system->getState();
-
-//    newState.segment(n,n) += dt * deriv.segment(n,n);
-//    newState.segment(0,n) += dt * newState.segment(n,n);
-
-//    system->setState(newState);
 }
 
 } // namespace integration

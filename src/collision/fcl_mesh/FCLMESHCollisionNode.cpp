@@ -231,29 +231,6 @@ bool FCLMESHCollisionNode::checkCollision(
                 _contactPoints->push_back(unfilteredContactPoints[k]);
             }
         }
-
-        ////////////////////////////////////////////////////////////////////////
-        // TODO: SPECIAL TEST CODE FOR GAZEBO SUPPORT BRANCH !!!
-        ////////////////////////////////////////////////////////////////////////
-        dynamics::Shape* collShape = mBodyNode->getCollisionShape(i);
-        if (!_contactPoints->empty()
-                && collShape->getShapeType() == dynamics::Shape::P_ELLIPSOID)
-        {
-            //            ContactPoint everageContactPoint;
-            //            unsigned int numContactPoint = _contactPoints->size();
-            //            for (unsigned int i = 0; i < numContactPoint; ++i)
-            //            {
-            //                everageContactPoint.point += _contactPoints->at(i).point;
-            //                everageContactPoint.normal += _contactPoints->at(i).normal;
-            //            }
-            //            everageContactPoint.point /= numContactPoint;
-            //            everageContactPoint.normal.normalize();
-
-            //            _contactPoints->clear();
-            //            _contactPoints->push_back(everageContactPoint);
-            //_contactPoints->resize();
-        }
-        ////////////////////////////////////////////////////////////////////////
     }
 
     return collision;

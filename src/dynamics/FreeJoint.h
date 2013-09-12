@@ -53,7 +53,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    FreeJoint(const std::string& _name = "Free joint");
+    FreeJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+              const std::string& _name = "Free joint");
 
     /// @brief
     virtual ~FreeJoint();

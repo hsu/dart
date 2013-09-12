@@ -53,7 +53,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    TranslationalJoint(const std::string& _name = "Translational joint");
+    TranslationalJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+                       const std::string& _name = "Translational joint");
 
     /// @brief
     virtual ~TranslationalJoint();

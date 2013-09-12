@@ -53,7 +53,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    UniversalJoint(const Eigen::Vector3d& _axis0 = Eigen::Vector3d(1.0, 0.0, 0.0),
+    UniversalJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+                   const Eigen::Vector3d& _axis0 = Eigen::Vector3d(1.0, 0.0, 0.0),
                    const Eigen::Vector3d& _axis1 = Eigen::Vector3d(0.0, 1.0, 0.0),
                    const std::string& _name = "Universal joint");
 
@@ -64,21 +65,19 @@ public:
     // Kinematical Properties
     //--------------------------------------------------------------------------
     /// @brief
-    void setAxis(int _idx, const Eigen::Vector3d& _axis);
+    void setAxis1(const Eigen::Vector3d& _axis);
 
     /// @brief
-    const Eigen::Vector3d& getAxis(int _idx) const;
+    void setAxis2(const Eigen::Vector3d& _axis);
+
+    /// @brief
+    const Eigen::Vector3d& getAxis1() const;
+
+    /// @brief
+    const Eigen::Vector3d& getAxis2() const;
 
     // Documentation is inherited.
     virtual double getPotentialEnergy() const { return 0.0; }
-
-    //--------------------------------------------------------------------------
-    // Structueral Properties
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    // Recursive Kinematics Algorithms
-    //--------------------------------------------------------------------------
 
 protected:
     //--------------------------------------------------------------------------

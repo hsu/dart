@@ -45,28 +45,48 @@ namespace dynamics {
 
 int Marker::msMarkerCount = 0;
 
-Marker::Marker(const char* _name, Eigen::Vector3d& _offset, BodyNode *_node, ConstraintType _type)
-    : mNode(_node), mOffset(_offset), mType(_type){
+Marker::Marker(const char* _name, Eigen::Vector3d& _offset, BodyNode *_node,
+               ConstraintType _type)
+    : mNode(_node), mOffset(_offset), mType(_type)
+{
     mID = Marker::msMarkerCount++;
     strcpy(mName, _name);
 }
 
-void Marker::draw(renderer::RenderInterface* _ri, bool _offset, const Eigen::Vector4d& _color, bool _useDefaultColor) const {
-    if (!_ri) return;
+Marker::~Marker()
+{
+}
+
+void Marker::draw(renderer::RenderInterface* _ri, bool _offset,
+                  const Eigen::Vector4d& _color, bool _useDefaultColor) const
+{
+    if (!_ri)
+        return;
+
     _ri->pushName(getID());
-    if(mType==HARD) _ri->setPenColor(Eigen::Vector3d(1, 0, 0));
-    else if(mType==SOFT) _ri->setPenColor(Eigen::Vector3d(0, 1, 0));
-    else {
-        if(_useDefaultColor) _ri->setPenColor(Eigen::Vector3d(0,0,1));
-        else _ri->setPenColor(Eigen::Vector4d(_color[0],_color[1],_color[2], _color[3]));
+
+    if (mType == HARD)
+        _ri->setPenColor(Eigen::Vector3d(1, 0, 0));
+    else if (mType == SOFT)
+        _ri->setPenColor(Eigen::Vector3d(0, 1, 0));
+    else
+    {
+        if (_useDefaultColor)
+            _ri->setPenColor(Eigen::Vector3d(0,0,1));
+        else
+            _ri->setPenColor(Eigen::Vector4d(
+                                 _color[0], _color[1], _color[2],  _color[3]));
     }
-    if(_offset){
+
+    if(_offset)
+    {
         _ri->pushMatrix();
         _ri->translate(mOffset);
         _ri->drawEllipsoid(Eigen::Vector3d(0.01, 0.01, 0.01));
         _ri->popMatrix();
     }
-    else{
+    else
+    {
         _ri->drawEllipsoid(Eigen::Vector3d(0.01, 0.01, 0.01));
     }
 
@@ -74,8 +94,54 @@ void Marker::draw(renderer::RenderInterface* _ri, bool _offset, const Eigen::Vec
 
 }
 
-Eigen::Vector3d Marker::getWorldCoords() {
+Eigen::Vector3d Marker::getWorldCoords()
+{
     return mNode->evalWorldPos(mOffset);
+}
+
+Eigen::Vector3d Marker::getLocalCoords() const
+{
+    return mOffset;
+}
+
+void Marker::setLocalCoords(Eigen::Vector3d& _offset)
+{
+    mOffset = _offset;
+}
+
+int Marker::getSkelIndex() const
+{
+    return mSkelIndex;
+}
+
+void Marker::setSkelIndex(int _idx)
+{
+    mSkelIndex=_idx;
+}
+
+int Marker::getID() const
+{
+    return mID;
+}
+
+BodyNode* Marker::getNode() const
+{
+    return mNode;
+}
+
+const char* Marker::getName() const
+{
+    return mName;
+}
+
+Marker::ConstraintType Marker::getConstraintType() const
+{
+    return mType;
+}
+
+void Marker::setConstraintType(Marker::ConstraintType _type)
+{
+    mType = _type;
 }
 
 } // namespace kinematics

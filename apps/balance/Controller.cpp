@@ -26,7 +26,7 @@ Controller::Controller(dynamics::Skeleton* _skel, constraint::ConstraintDynamics
     mDesiredDofs.resize(nDof);
     for (int i = 0; i < nDof; i++){
         mTorques[i] = 0.0;
-        mDesiredDofs[i] = mSkel->getDof(i)->get_q();
+        mDesiredDofs[i] = mSkel->getGenCoord(i)->get_q();
     }
 
     // using SPD results in simple Kp coefficients

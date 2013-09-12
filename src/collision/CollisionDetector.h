@@ -102,13 +102,8 @@ public:
     virtual CollisionNode* createCollisionNode(
             dynamics::BodyNode* _bodyNode) = 0;
 
-    /// @brief
-    void enablePair(dynamics::BodyNode* _node1,
-                    dynamics::BodyNode* _node2);
-
-    /// @brief
-    void disablePair(dynamics::BodyNode* _node1,
-                     dynamics::BodyNode* _node2);
+    void enablePair(dynamics::BodyNode* _node1, dynamics::BodyNode* _node2);
+    void disablePair(dynamics::BodyNode* _node1, dynamics::BodyNode* _node2);
 
     /// @brief
     virtual bool checkCollision(bool _checkAllCollisions,

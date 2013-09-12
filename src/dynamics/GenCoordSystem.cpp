@@ -35,7 +35,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "dynamics/System.h"
+#include "dynamics/GenCoordSystem.h"
 
 namespace dart {
 namespace dynamics {
@@ -48,14 +48,14 @@ GenCoordSystem::~GenCoordSystem()
 {
 }
 
-GenCoord* GenCoordSystem::getDof(int _idx) const
+GenCoord* GenCoordSystem::getGenCoord(int _idx) const
 {
     assert(0 <= _idx && _idx < getDOF());
 
     return mGenCoords[_idx];
 }
 
-GenCoord* GenCoordSystem::getDof(const std::string& _name) const
+GenCoord* GenCoordSystem::getGenCoord(const std::string& _name) const
 {
     int size = getDOF();
 
@@ -289,6 +289,112 @@ Eigen::VectorXd GenCoordSystem::get_tau() const
     }
 
     return tau;
+}
+
+Eigen::VectorXd GenCoordSystem::get_qMax() const
+{
+    int size = getDOF();
+    Eigen::VectorXd q = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        q(i) = mGenCoords[i]->get_qMax();
+    }
+
+    return q;
+}
+
+Eigen::VectorXd GenCoordSystem::get_dqMax() const
+{
+    int size = getDOF();
+    Eigen::VectorXd dq = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        dq(i) = mGenCoords[i]->get_dqMax();
+    }
+
+    return dq;
+}
+
+Eigen::VectorXd GenCoordSystem::get_ddqMax() const
+{
+    int size = getDOF();
+    Eigen::VectorXd ddq = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        ddq(i) = mGenCoords[i]->get_ddqMax();
+    }
+
+    return ddq;
+}
+
+Eigen::VectorXd GenCoordSystem::get_tauMax() const
+{
+    int size = getDOF();
+    Eigen::VectorXd tau = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        tau(i) = mGenCoords[i]->get_tauMax();
+    }
+
+    return tau;
+}
+
+Eigen::VectorXd GenCoordSystem::get_qMin() const
+{
+    int size = getDOF();
+    Eigen::VectorXd q = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        q(i) = mGenCoords[i]->get_qMin();
+    }
+
+    return q;
+}
+
+Eigen::VectorXd GenCoordSystem::get_dqMin() const
+{
+    int size = getDOF();
+    Eigen::VectorXd dq = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        dq(i) = mGenCoords[i]->get_dqMin();
+    }
+
+    return dq;
+}
+
+Eigen::VectorXd GenCoordSystem::get_ddqMin() const
+{
+    int size = getDOF();
+    Eigen::VectorXd ddq = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        ddq(i) = mGenCoords[i]->get_ddqMin();
+    }
+
+    return ddq;
+}
+
+Eigen::VectorXd GenCoordSystem::get_tauMin() const
+{
+    int size = getDOF();
+    Eigen::VectorXd tau = Eigen::VectorXd::Zero(size);
+
+    for (int i = 0; i < size; ++i) {
+        tau(i) = mGenCoords[i]->get_tauMin();
+    }
+
+    return tau;
+}
+
+int dart::dynamics::GenCoordSystem::getDOF() const
+{
+    return mGenCoords.size();
+}
+
+const std::vector<GenCoord*>&GenCoordSystem::getGenCoords() const
+{
+    return mGenCoords;
 }
 
 } // namespace dynamics

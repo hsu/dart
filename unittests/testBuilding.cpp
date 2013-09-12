@@ -83,20 +83,20 @@ TEST(BUILDING, BASIC)
 	// Joints
 	joint1.setParentBody(NULL);	// world
 	joint1.setChildBody(&body1);
-    joint1.setTransformFromParentBody(Eigen::Isometry3d());
-    joint1.setTransformFromChildBody(Eigen::Isometry3d());
+    joint1.setTransformFromParentBody(Eigen::Isometry3d::Identity());
+    joint1.setTransformFromChildBody(Eigen::Isometry3d::Identity());
     joint1.setAxis(Eigen::Vector3d(1.0, 0.0, 0.0));
 
 	joint2.setParentBody(&body1);
 	joint2.setChildBody(&body2);
-    joint2.setTransformFromParentBody(Eigen::Isometry3d());
-    joint2.setTransformFromChildBody(Eigen::Isometry3d());
+    joint2.setTransformFromParentBody(Eigen::Isometry3d::Identity());
+    joint2.setTransformFromChildBody(Eigen::Isometry3d::Identity());
     joint2.setAxis(Eigen::Vector3d(1.0, 0.0, 0.0));
 
 	joint3.setParentBody(&body1);
 	joint3.setChildBody(&body3);
-    joint3.setTransformFromParentBody(Eigen::Isometry3d());
-    joint3.setTransformFromChildBody(Eigen::Isometry3d());
+    joint3.setTransformFromParentBody(Eigen::Isometry3d::Identity());
+    joint3.setTransformFromChildBody(Eigen::Isometry3d::Identity());
     joint3.setAxis(Eigen::Vector3d(1.0, 0.0, 0.0));
 
 	// Skeleton
@@ -113,14 +113,14 @@ TEST(BUILDING, BASIC)
 	//--------------------------------------------------------------------------
 	//
 	//--------------------------------------------------------------------------
-	EXPECT_TRUE(body1.getParentBody() == NULL);
+	EXPECT_TRUE(body1.getParentBodyNode() == NULL);
 	EXPECT_TRUE(body1.getChildBodies().size() == 2);
 	EXPECT_TRUE(body1.getChildBodyNode(0) == &body2);
 
-	EXPECT_TRUE(body2.getParentBody() == &body1);
+	EXPECT_TRUE(body2.getParentBodyNode() == &body1);
 	EXPECT_TRUE(body2.getChildBodies().size() == 0);
 
-	EXPECT_TRUE(body3.getParentBody() == &body1);
+	EXPECT_TRUE(body3.getParentBodyNode() == &body1);
 	EXPECT_TRUE(body3.getChildBodies().size() == 0);
 
 	EXPECT_TRUE(joint1.getParentBodyNode() == NULL);

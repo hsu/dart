@@ -49,11 +49,7 @@ namespace dart {
 namespace dynamics {
 
 class Joint;
-class Transformation;
 
-// TODO: Change name (Dof --> GeneralizedCoordinate).
-// A degrees of freedom is just a number of generalized coordinates.
-//
 // http://en.wikipedia.org/wiki/Degree_of_freedom:
 //   In many scientific fields, the degrees of freedom of a system is the number
 //   of parameters of the system that may vary independently. For example, the
@@ -64,12 +60,6 @@ class Transformation;
 class GenCoord
 {
 public:
-    enum CoordType {
-        CT_REAL,
-        CT_SO3,
-        CT_SE3
-    };
-
     /// @brief
     GenCoord();
 
@@ -186,6 +176,8 @@ protected:
     double init_dq;
     //double init_ddq;
 };
+
+DEPRECATED typedef GenCoord Dof;
 
 } // namespace dynamics
 } // namespace dart

@@ -80,14 +80,14 @@ simulation::World* DartLoader::parseWorld(std::string _urdfFileName) {
       dynamics::Joint* rootJoint = skeleton->getRoot()->getParentJoint();
       urdf::Pose pose = worldInterface->models[i].origin;
       if(dynamic_cast<dynamics::FreeJoint*>(rootJoint)) {
-          rootJoint->getDof(0)->set_q(pose.position.x);
-          rootJoint->getDof(1)->set_q(pose.position.y);
-          rootJoint->getDof(2)->set_q(pose.position.z);
+          rootJoint->getGenCoord(0)->set_q(pose.position.x);
+          rootJoint->getGenCoord(1)->set_q(pose.position.y);
+          rootJoint->getGenCoord(2)->set_q(pose.position.z);
           double r, p, y;
           worldInterface->models[i].origin.rotation.getRPY(r, p, y);
-          rootJoint->getDof(3)->set_q(y);
-          rootJoint->getDof(4)->set_q(p);
-          rootJoint->getDof(5)->set_q(r);
+          rootJoint->getGenCoord(3)->set_q(y);
+          rootJoint->getGenCoord(4)->set_q(p);
+          rootJoint->getGenCoord(5)->set_q(r);
       }
       else {
           rootJoint->setTransformFromParentBody(toEigen(pose));
@@ -244,22 +244,22 @@ dynamics::Joint* DartLoader::createDartJoint(boost::shared_ptr<const urdf::Joint
   dynamics::Joint* joint;
   switch(_jt->type) {
   case urdf::Joint::REVOLUTE:
-      joint = new dynamics::RevoluteJoint(toEigen(_jt->axis));
-      joint->getDof(0)->set_qMin(_jt->limits->lower);
-      joint->getDof(1)->set_qMin(_jt->limits->upper);
+      joint = new dynamics::RevoluteJoint(_parent, _child, toEigen(_jt->axis));
+      joint->getGenCoord(0)->set_qMin(_jt->limits->lower);
+      joint->getGenCoord(1)->set_qMin(_jt->limits->upper);
   case urdf::Joint::CONTINUOUS:
-      joint = new dynamics::RevoluteJoint(toEigen(_jt->axis));
+      joint = new dynamics::RevoluteJoint(_parent, _child, toEigen(_jt->axis));
       break;
   case urdf::Joint::PRISMATIC:
-      joint = new dynamics::PrismaticJoint(toEigen(_jt->axis));
-      joint->getDof(0)->set_qMin(_jt->limits->lower);
-      joint->getDof(1)->set_qMin(_jt->limits->upper);
+      joint = new dynamics::PrismaticJoint(_parent, _child, toEigen(_jt->axis));
+      joint->getGenCoord(0)->set_qMin(_jt->limits->lower);
+      joint->getGenCoord(1)->set_qMin(_jt->limits->upper);
       break;
   case urdf::Joint::FIXED:
-      joint = new dynamics::WeldJoint();
+      joint = new dynamics::WeldJoint(_parent, _child);
       break;
   case urdf::Joint::FLOATING:
-      joint = new dynamics::FreeJoint();
+      joint = new dynamics::FreeJoint(_parent, _child);
       break;
   case urdf::Joint::PLANAR:
       std::cout << "Planar joint not supported." << std::endl;
@@ -270,8 +270,6 @@ dynamics::Joint* DartLoader::createDartJoint(boost::shared_ptr<const urdf::Joint
       assert(false);
       return NULL;
   }
-  joint->setParentBody(_parent);
-  joint->setChildBody(_child);
   joint->setName(_jt->name);
   joint->setTransformFromParentBody(toEigen(_jt->parent_to_joint_origin_transform));
   joint->setTransformFromChildBody(Eigen::Isometry3d::Identity());

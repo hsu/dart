@@ -40,7 +40,7 @@
 #define DART_DYNAMICS_JOINT_H
 
 #include "math/Geometry.h"
-#include "dynamics/System.h"
+#include "dynamics/GenCoordSystem.h"
 
 namespace dart {
 namespace renderer { class RenderInterface; }
@@ -84,7 +84,8 @@ public:
     // Constructor and Destructor
     //--------------------------------------------------------------------------
     /// @brief
-    Joint(const std::string& _name = "");
+    Joint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+          const std::string& _name = "");
 
     /// @brief
     virtual ~Joint();
@@ -118,6 +119,13 @@ public:
 
     /// @brief
     const Eigen::Vector6d& getLocalAcceleration() const;
+
+    /// @brief true if d is present in the dof list for the joint.
+    bool isPresent(const GenCoord* _q) const;
+
+    /// @brief Get local index of the dof at this joint; if the dof is not
+    /// presented at this joint, return -1.
+    int getGenCoordLocalIndex(int _dofSkelIndex) const;
 
     //--------------------------------------------------------------------------
     // Structueral Properties

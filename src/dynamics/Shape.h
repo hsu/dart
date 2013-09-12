@@ -48,8 +48,6 @@ namespace dart {
 namespace renderer { class RenderInterface; }
 namespace dynamics {
 
-class Transformation;
-
 /// @brief
 class Shape
 {

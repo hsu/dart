@@ -1,5 +1,5 @@
 #include "MyWindow.h"
-#include "common/Paths.h"
+#include "utils/Paths.h"
 #include "dynamics/Skeleton.h"
 #include "utils/SkelParser.h"
 

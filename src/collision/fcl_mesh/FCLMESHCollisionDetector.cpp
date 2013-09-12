@@ -66,7 +66,6 @@ bool FCLMESHCollisionDetector::checkCollision(bool _checkAllCollisions,
     return collision;
 }
 
-
 bool FCLMESHCollisionDetector::checkCollision(CollisionNode* _node1,
                                               CollisionNode* _node2,
                                               bool _calculateContactPoints)

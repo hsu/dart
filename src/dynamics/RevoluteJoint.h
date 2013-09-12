@@ -53,7 +53,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    RevoluteJoint(const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
+    RevoluteJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+                  const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
                   const std::string& _name = "Revolute joint");
 
     /// @brief

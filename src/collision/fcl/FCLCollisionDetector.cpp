@@ -99,6 +99,7 @@ bool FCLCollisionDetector::checkCollision(bool _checkAllCollisions,
                          request, result);
 
             unsigned int numContacts = result.numContacts();
+
             for (unsigned int m = 0; m < numContacts; ++m)
             {
                 const fcl::Contact& contact = result.getContact(m);

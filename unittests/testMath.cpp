@@ -647,7 +647,7 @@ Matrix<double,6,6> Transform_Matrix4d(const Matrix4d& T, const Matrix<double,6,6
 
 TEST(MATH, ARTICULATED_INERTIA_TRANSFORM)
 {
-    const int iterations = 50000000;
+    const int iterations = 100000;
 
     Affine3d A1 = Translation3d(0.1, 0.2, 0.3) * AngleAxisd(0.5, Vector3d(1.0 / sqrt(2.0), 1.0 / sqrt(2.0), 0.0));
     Matrix<double,6,6> a1 = Matrix<double,6,6>::Identity();
@@ -701,7 +701,7 @@ TEST(MATH, ARTICULATED_INERTIA_TRANSFORM)
 
 TEST(MATH, ADJOINT_MAPPING)
 {
-    const int iterations = 200000000;
+    const int iterations = 10000;
 
     Affine3d A1 = Translation3d(0.1, 0.2, 0.3) * AngleAxisd(0.5, Vector3d(1.0 / sqrt(2.0), 1.0 / sqrt(2.0), 0.0));
     Matrix<double,6,1> a1, a2;
@@ -764,7 +764,7 @@ TEST(MATH, ADJOINT_MAPPING)
 
 TEST(MATH, TRANSFORMATION)
 {
-    const int iterations = 100000000;
+    const int iterations = 10000;
 
     Affine3d A1 = Translation3d(0.1, 0.2, 0.3) * AngleAxisd(0.5, Vector3d(1.0 / sqrt(2.0), 1.0 / sqrt(2.0), 0.0));
     Affine3d A2 = A1, A3;
@@ -813,7 +813,7 @@ TEST(MATH, TRANSFORMATION)
 
 TEST(MATH, INVERSION)
 {
-    const int iterations = 100000000;
+    const int iterations = 10000;
 
     Affine3d A1 = Translation3d(0.1, 0.2, 0.3) * AngleAxisd(0.5, Vector3d(1.0 / sqrt(2.0), 1.0 / sqrt(2.0), 0.0));
     Affine3d A2 = A1, A3;

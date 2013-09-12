@@ -118,7 +118,7 @@ bool FileInfoDof::saveFile( const char* _fName, int _start, int _end, double _sa
     outFile << "frames = " << last-first+1 << " dofs = " << mSkel->getDOF() << std::endl;
 
     for (int i = 0; i < mSkel->getDOF(); i++)
-        outFile << mSkel->getDof(i)->getName() << ' ';
+        outFile << mSkel->getGenCoord(i)->getName() << ' ';
     outFile << std::endl;
 
     for (int i = first; i <= last; i++){

@@ -43,20 +43,22 @@
 namespace dart {
 namespace dynamics {
 
-FreeJoint::FreeJoint(const std::string& _name)
-    : Joint(_name)
+FreeJoint::FreeJoint(BodyNode* _parent, BodyNode* _child,
+                     const std::string& _name)
+    : Joint(_parent, _child, _name)
 {
     mJointType = FREE;
+
     mGenCoords.push_back(&mCoordinate[0]);
     mGenCoords.push_back(&mCoordinate[1]);
     mGenCoords.push_back(&mCoordinate[2]);
     mGenCoords.push_back(&mCoordinate[3]);
     mGenCoords.push_back(&mCoordinate[4]);
     mGenCoords.push_back(&mCoordinate[5]);
+
     mS = Eigen::Matrix<double,6,6>::Zero();
     mdS = Eigen::Matrix<double,6,6>::Zero();
 
-    // TODO: Temporary code
     mDampingCoefficient.resize(6, 0);
 }
 

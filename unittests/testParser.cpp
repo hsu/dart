@@ -41,7 +41,7 @@
 
 #include "dynamics/RevoluteJoint.h"
 #include "dynamics/Skeleton.h"
-#include "common/Paths.h"
+#include "utils/Paths.h"
 #include "simulation/World.h"
 #include "utils/SkelParser.h"
 
@@ -109,7 +109,7 @@ TEST(PARSER, PARSER_DATA_STRUCTUER)
 
 TEST(PARSER, PARSER_DART_EMPTY)
 {
-    World* world = readSkelFile(DART_DATA_PATH"dart/test/empty.dart");
+    World* world = readSkelFile(DART_DATA_PATH"skel/test/empty.skel");
 
     EXPECT_TRUE(world != NULL);
     EXPECT_EQ(world->getTimeStep(), 0.001);
@@ -127,7 +127,7 @@ TEST(PARSER, PARSER_DART_EMPTY)
 
 TEST(PARSER, PARSER_DART_SINGLE_PENDULUM)
 {
-    World* world = readSkelFile(DART_DATA_PATH"dart/test/single_pendulum.dart");
+    World* world = readSkelFile(DART_DATA_PATH"skel/test/single_pendulum.skel");
 
     EXPECT_TRUE(world != NULL);
     EXPECT_EQ(world->getTimeStep(), 0.001);
@@ -148,7 +148,7 @@ TEST(PARSER, PARSER_DART_SINGLE_PENDULUM)
 
 TEST(PARSER, PARSER_DART_SERIAL_CAHIN)
 {
-    World* world = readSkelFile(DART_DATA_PATH"dart/test/serial_chain.dart");
+    World* world = readSkelFile(DART_DATA_PATH"skel/test/serial_chain_ball_joint.skel");
 
     EXPECT_TRUE(world != NULL);
     EXPECT_EQ(world->getTimeStep(), 0.001);

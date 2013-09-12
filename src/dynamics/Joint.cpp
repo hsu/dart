@@ -43,12 +43,12 @@
 namespace dart {
 namespace dynamics {
 
-Joint::Joint(const std::string& _name)
+Joint::Joint(BodyNode* _parent, BodyNode* _child, const std::string& _name)
     : mName(_name),
       mSkelIndex(-1),
       mJointType(UNKNOWN),
-      mParentBody(NULL),
-      mChildBody(NULL),
+      mParentBody(_parent),
+      mChildBody(_child),
       mT_ParentBodyToJoint(Eigen::Isometry3d::Identity()),
       mT_ChildBodyToJoint(Eigen::Isometry3d::Identity()),
       mT(Eigen::Isometry3d::Identity()),
@@ -57,6 +57,8 @@ Joint::Joint(const std::string& _name)
       mdV(Eigen::Vector6d::Zero()),
       mdS(math::Jacobian::Zero(6,0))
 {
+    setParentBody(mParentBody);
+    setChildBody(mChildBody);
 }
 
 Joint::~Joint()
@@ -103,6 +105,24 @@ const Eigen::Vector6d&Joint::getLocalAcceleration() const
     return mdV;
 }
 
+bool Joint::isPresent(const GenCoord* _q) const
+{
+    for (unsigned int i = 0; i < getDOF(); i++)
+        if (_q == mGenCoords[i])
+            return true;
+
+    return false;
+}
+
+int Joint::getGenCoordLocalIndex(int _dofSkelIndex) const
+{
+    for (unsigned int i = 0; i < mGenCoords.size(); i++)
+        if (mGenCoords[i]->getSkelIndex() == _dofSkelIndex)
+            return i;
+
+    return -1;
+}
+
 void Joint::setSkelIndex(int _idx)
 {
     mSkelIndex= _idx;
@@ -117,14 +137,13 @@ void Joint::setParentBody(BodyNode* _body)
 {
     mParentBody = _body;
 
-    // TODO: Use builder
     if (mParentBody != NULL)
     {
         mParentBody->addChildJoint(this);
 
         if (mChildBody != NULL)
         {
-            mChildBody->setParentBody(mParentBody);
+            mChildBody->setParentBodyNode(mParentBody);
             mParentBody->addChildBody(mChildBody);
         }
     }
@@ -134,7 +153,6 @@ void Joint::setChildBody(BodyNode* _body)
 {
     mChildBody = _body;
 
-    // TODO: Use builder
     if (mChildBody != NULL)
     {
         mChildBody->setParentJoint(this);
@@ -142,7 +160,7 @@ void Joint::setChildBody(BodyNode* _body)
         if (mParentBody != NULL)
         {
             mParentBody->addChildBody(mChildBody);
-            mChildBody->setParentBody(mParentBody);
+            mChildBody->setParentBodyNode(mParentBody);
         }
     }
 }
@@ -215,7 +233,7 @@ Eigen::VectorXd Joint::getDampingForces() const
     Eigen::VectorXd dampingForce(numDofs);
 
     for (int i = 0; i < numDofs; ++i)
-        dampingForce(i) = -mDampingCoefficient[i] * getDof(i)->get_dq();
+        dampingForce(i) = -mDampingCoefficient[i] * getGenCoord(i)->get_dq();
 
     return dampingForce;
 }

@@ -44,16 +44,20 @@
 namespace dart {
 namespace dynamics {
 
-EulerJoint::EulerJoint()
-    : Joint("EulerXYZ joint"),
+EulerJoint::EulerJoint(BodyNode* _parent, BodyNode* _child,
+                       const std::string& _name)
+    : Joint(_parent, _child, "EulerXYZ joint"),
       mAxisOrder(AO_XYZ)
 {
     mJointType = EULER;
+
     mGenCoords.push_back(&mCoordinate[0]);
     mGenCoords.push_back(&mCoordinate[1]);
     mGenCoords.push_back(&mCoordinate[2]);
+
     mS = Eigen::Matrix<double,6,3>::Zero();
     mdS = Eigen::Matrix<double,6,3>::Zero();
+
     mDampingCoefficient.resize(3, 0);
 }
 

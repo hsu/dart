@@ -42,18 +42,19 @@
 namespace dart {
 namespace dynamics {
 
-RevoluteJoint::RevoluteJoint(const Eigen::Vector3d& axis, const std::string& _name)
-    : Joint(_name),
-      mAxis(axis)
-      //mDampingCoefficient(0.0)
+RevoluteJoint::RevoluteJoint(BodyNode* _parent, BodyNode* _child,
+                             const Eigen::Vector3d& axis,
+                             const std::string& _name)
+    : Joint(_parent, _child, _name),
+      mAxis(axis.normalized())
 {
     mJointType = REVOLUTE;
+
     mGenCoords.push_back(&mCoordinate);
 
     mS = Eigen::Matrix<double,6,1>::Zero();
     mdS = Eigen::Matrix<double,6,1>::Zero();
 
-    // TODO: Temporary code
     mDampingCoefficient.resize(1, 0);
 }
 

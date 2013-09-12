@@ -1,14 +1,14 @@
 #include "MyWindow.h"
 
-#include "common/Paths.h"
+#include "utils/Paths.h"
 #include "dynamics/Skeleton.h"
+#include "simulation/World.h"
 #include "utils/SkelParser.h"
 
 using namespace Eigen;
 using namespace std;
 
 using namespace dart;
-using namespace kinematics;
 using namespace dynamics;
 
 int main(int argc, char* argv[])
@@ -17,8 +17,8 @@ int main(int argc, char* argv[])
             = dart::utils::readSkelFile(DART_DATA_PATH"skel/fullbody1.skel");
     assert(myWorld != NULL);
 
-    MyWindow window;
-    window.setWorld(myWorld);
+    MyWindow window(myWorld->getSkeleton(0), myWorld->getSkeleton(1));
+    //window.setWorld(myWorld);
 
     cout << "space bar: simulation on/off" << endl;
     cout << "'p': playback/stop" << endl;

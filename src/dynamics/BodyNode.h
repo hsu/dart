@@ -93,6 +93,7 @@ class GenCoord;
 class Skeleton;
 class Joint;
 class Shape;
+class Marker;
 
 /// @brief BodyNode class represents a single node of the skeleton.
 ///
@@ -130,17 +131,20 @@ public:
     /// @brief
     const std::string& getName() const;
 
-    /// @brief
-    void setGravityMode(bool _onoff) { mGravityMode = _onoff; }
+    /// @brief Set gravity mode.
+    /// @param[in] _gravityMode
+    void setGravityMode(bool _onoff);
+
+    /// @brief If the gravity mode is false, this body node does not being
+    /// affected by gravity.
+    /// @return
+    bool getGravityMode() const;
 
     /// @brief
-    bool getGravityMode() const { return mGravityMode; }
+    bool isCollidable() const;
 
     /// @brief
-    bool isCollidable() const { return mCollidable; }
-
-    /// @brief
-    void setCollidability(bool _c) { mCollidable = _c; }
+    void setCollidability(bool _c);
 
     /// @brief
     void setMass(double _mass);
@@ -149,6 +153,9 @@ public:
     double getMass() const;
 
     /// @brief
+    DEPRECATED void setLocalInertia(double _Ixx, double _Iyy, double _Izz,
+                                    double _Ixy, double _Ixz, double _Iyz)
+    { setMomentOfInertia(_Ixx, _Iyy, _Izz, _Ixy, _Ixz, _Iyz); }
     void setMomentOfInertia(double _Ixx, double _Iyy, double _Izz,
                             double _Ixy, double _Ixz, double _Iyz);
 
@@ -168,42 +175,51 @@ public:
     // Structueral Properties
     //--------------------------------------------------------------------------
     /// @brief
-    void setSkelIndex(int _idx) { mSkelIndex = _idx; }
+    void setSkelIndex(int _idx);
 
     /// @brief
-    int getSkelIndex() const { return mSkelIndex; }
+    int getSkelIndex() const;
+
+    /// @brief Use addVisualizationShape() and addCollisionShape()
+    DEPRECATED void addShape(Shape* _p);
+
+    /// @brief Use getVisualizationShape()
+    DEPRECATED Shape* getShape(int _idx) const;
+
+    /// @brief Use getNumVisualizationShapes()
+    DEPRECATED int getNumShapes() const;
 
     /// @brief
-    void addVisualizationShape(Shape *_p) { mVizShapes.push_back(_p); }
+    void addVisualizationShape(Shape *_p);
 
     /// @brief
-    int getNumVisualizationShapes() const { return mVizShapes.size(); }
+    int getNumVisualizationShapes() const;
 
     /// @brief
-    Shape* getVisualizationShape(int _idx) const { return mVizShapes[_idx]; }
+    Shape* getVisualizationShape(int _idx) const;
 
     /// @brief
-    void addCollisionShape(Shape *_p) { mColShapes.push_back(_p); }
+    void addCollisionShape(Shape *_p);
 
     /// @brief
-    int getNumCollisionShapes() const { return mColShapes.size(); }
+    int getNumCollisionShapes() const;
 
     /// @brief
-    Shape* getCollisionShape(int _idx) const { return mColShapes[_idx]; }
+    Shape* getCollisionShape(int _idx) const;
 
     /// @brief
-    DEPRECATED void setSkel(Skeleton* _skel) { mSkeleton = _skel; }
-    void setSkeleton(Skeleton* _skel) { mSkeleton = _skel; }
+    DEPRECATED void setSkel(Skeleton* _skel);
+    void setSkeleton(Skeleton* _skel);
 
     /// @brief
-    DEPRECATED Skeleton* getSkel() const { return mSkeleton; }
-    Skeleton* getSkeleton() const { return mSkeleton; }
+    DEPRECATED Skeleton* getSkel() const;
+    Skeleton* getSkeleton() const;
 
     /// @brief
-    void setParentJoint(Joint* _joint) { mParentJoint = _joint; }
+    void setParentJoint(Joint* _joint);
 
     /// @brief
-    Joint* getParentJoint() const { return mParentJoint; }
+    Joint* getParentJoint() const;
 
     /// @brief
     void addChildJoint(Joint* _joint);
@@ -212,43 +228,64 @@ public:
     Joint* getChildJoint(int _idx) const;
 
     /// @brief
-    const std::vector<Joint*>& getChildJoints() const { return mJointsChild; }
+    const std::vector<Joint*>& getChildJoints() const;
 
     /// @brief
-    int getNumChildJoints() const { return mJointsChild.size(); }
+    int getNumChildJoints() const;
 
     /// @brief
-    void setParentBody(BodyNode* _body) { mParentBodyNode = _body; }
+    DEPRECATED void getParentNode(BodyNode* _body) { setParentBodyNode(_body); }
+    void setParentBodyNode(BodyNode* _body);
 
     /// @brief
-    BodyNode* getParentBody() const { return mParentBodyNode; }
+    DEPRECATED BodyNode* getParentNode() const { return getParentBodyNode(); }
+    BodyNode* getParentBodyNode() const;
 
     /// @brief
     void addChildBody(BodyNode* _body);
 
     /// @brief
+    DEPRECATED BodyNode* getChildNode(int _idx) const { return getChildBodyNode(_idx); }
     BodyNode* getChildBodyNode(int _idx) const;
 
     /// @brief
-    const std::vector<BodyNode*>& getChildBodies() const { return mChildBodyNodes; }
+    const std::vector<BodyNode*>& getChildBodies() const;
 
     /// @brief
+    void addMarker(Marker* _h);
+
+    /// @brief
+    int getNumMarkers() const;
+
+    /// @brief
+    Marker* getMarker(int _idx) const;
+
+    /// @brief Set up the list of dependent dofs.
     void setDependDofList();
+
+    /// @brief Test whether this dof is dependent or not.
+    /// @warning You may want to use getNumDependentDofs / getDependentDof for
+    /// efficiency.
+    bool dependsOn(int _dofIndex) const;
 
     /// @brief
     int getNumLocalDofs() const;
 
     /// @brief
-    GenCoord* getLocalDof(int _idx) const;
+    DEPRECATED GenCoord* getDof(int _idx) const;
+    GenCoord* getLocalGenCoord(int _idx) const;
+
+    /// @brief true if d is present in the dof list for the joint.
+    bool isPresent(const GenCoord* _q) const;
 
     /// @brief The number of the dofs by which this node is affected.
-    int getNumDependentDofs() const { return mDependentDofIndexes.size(); }
+    int getNumDependentDofs() const;
 
     /// @brief
-    const std::vector<int>& getDependentDofIndexes() const { return mDependentDofIndexes; }
+    const std::vector<int>& getDependentDofIndexes() const;
 
     /// @brief Return an dof index from the array index (< getNumDependentDofs).
-    int getDependentDof(int _arrayIndex) const { return mDependentDofIndexes[_arrayIndex]; }
+    int getDependentDof(int _arrayIndex) const;
 
     //--------------------------------------------------------------------------
     // Properties updated by dynamics (kinematics)
@@ -303,7 +340,7 @@ public:
     Eigen::Vector6d getAccelerationWorldAtFrame(const Eigen::Isometry3d& _T) const;
 
     /// @brief
-    const math::Jacobian& getJacobianBody() const { return mBodyJacobian; }
+    const math::Jacobian& getJacobianBody() const;
 
     /// @brief
     math::Jacobian getJacobianWorld() const;
@@ -311,29 +348,20 @@ public:
     /// @brief Get body Jacobian at contact point.
     math::Jacobian getJacobianWorldAtPoint(const Eigen::Vector3d& r_world) const;
 
-    // TODO: Speed up here.
-    // TODO: Eigne?
     /// @brief
     Eigen::MatrixXd getJacobianWorldAtPoint_LinearPartOnly(
             const Eigen::Vector3d& r_world) const;
 
     /// @brief
-    void setColliding(bool _colliding) { mColliding = _colliding; }
+    const math::Jacobian& getJacobianDeriv() const;
 
     /// @brief
-    bool getColliding() { return mColliding; }
+    void setColliding(bool _colliding);
 
     /// @brief
-    void setExternalForceLocal(const Eigen::Vector6d& _FextLocal);
+    bool getColliding();
 
-    /// @brief
-    void setExternalForceGlobal(const Eigen::Vector6d& _FextWorld);
-
-    /// @brief
-    void setExternalForceLocal(const Eigen::Vector3d& _posLocal,
-                               const Eigen::Vector3d& _linearForceGlobal);
-
-    /// @brief apply linear Cartesian forces to this node.
+    /// @brief Apply linear Cartesian forces to this node.
     ///
     /// A force is defined by a point of application and a force vector. The
     /// last two parameters specify frames of the first two parameters.
@@ -342,7 +370,8 @@ public:
     /// When conversion is needed, make sure the transformations are avaialble.
     void addExtForce(const Eigen::Vector3d& _offset,
                      const Eigen::Vector3d& _force,
-                     bool _isOffsetLocal = true, bool _isForceLocal = false);
+                     bool _isOffsetLocal = true,
+                     bool _isForceLocal = false);
 
     /// @brief apply Cartesian torque to the node.
     ///
@@ -356,39 +385,22 @@ public:
     void clearExternalForces();
 
     /// @brief
-    void addExternalForceLocal(const Eigen::Vector6d& _FextLocal);
-
-    /// @brief
-    void addExternalForceGlobal(const Eigen::Vector6d& _FextWorld);
-
-    /// @brief apply linear Cartesian forces to this node.
-    ///
-    /// A force is defined by a point of application and a force vector. The
-    /// last two parameters specify frames of the first two parameters.
-    /// Coordinate transformations are applied when needed. The point of
-    /// application and the force in local coordinates are stored in mContacts.
-    /// When conversion is needed, make sure the transformations are avaialble.
-    void addExternalForceLocal(const Eigen::Vector3d& _offset,
-                               const Eigen::Vector3d& _linearForce,
-                               bool _isOffsetLocal = true,
-                               bool _isLinearForceLocal = false);
-
-    /// @brief
     const Eigen::Vector6d& getExternalForceLocal() const;
 
     /// @brief
     Eigen::Vector6d getExternalForceGlobal() const;
 
     /// @brief
-    const Eigen::Vector6d& getBodyForce() const { return mF; }
+    const Eigen::Vector6d& getBodyForce() const;
 
     /// @brief
-    double getKineticEnergy() const { return 0.5 * mV.dot(mI * mV); }
+    double getKineticEnergy() const;
 
-    //// TODO: Not implemented.
-    ///// @brief
-    //double getPotentialEnergy() const {}
+    /// @brief
+    Eigen::Vector3d evalLinMomentum() const;
 
+    /// @brief
+    Eigen::Vector3d evalAngMomentum(Eigen::Vector3d _pivot);
 
     //--------------------------------------------------------------------------
     // Rendering
@@ -398,14 +410,19 @@ public:
               const Eigen::Vector4d& _color = Eigen::Vector4d::Ones(),
               bool _useDefaultColor = true, int _depth = 0) const;
 
+    /// @brief Render the markers
+    void drawMarkers(renderer::RenderInterface* _ri = NULL,
+                     const Eigen::Vector4d& _color = Eigen::Vector4d::Ones(),
+                     bool _useDefaultColor = true) const;
+
     //--------------------------------------------------------------------------
     // Sub-functions for Recursive Kinematics Algorithms
     //--------------------------------------------------------------------------
     /// @brief Initialize the vector memebers with proper sizes.
     void init();
 
-    /// @brief
-    /// parentJoint.T, parentBody.W --> W
+    /// @brief Update local transformations and world transformations.
+    /// T(i-1,i), W(i)
     void updateTransformation();
 
     /// @brief
@@ -454,7 +471,8 @@ public:
     /// @brief
     void updateDampingForce();
 
-    /// @brief
+    /// @brief Updates the mass matrix mM
+    DEPRECATED void evalMassMatrix();
     void updateMassMatrix();
 
     /// @brief Aggregate the external forces mFext in the generalized
@@ -482,7 +500,6 @@ protected:
 
     /// @brief If the gravity mode is false, this body node does not
     /// being affected by gravity.
-    /// TODO: Not implemented yet!
     bool mGravityMode;
 
     /// @brief Generalized inertia.
@@ -525,20 +542,19 @@ protected:
     Skeleton* mSkeleton;
 
     /// @brief
-    // TODO: rename
-    //Joint* mParentJoint;
     Joint* mParentJoint;
 
     /// @brief
-    // TODO: rename
-    //std::vector<Joint*> mChildJoints;
-    std::vector<Joint*> mJointsChild;
+    std::vector<Joint*> mChildJoints;
 
     /// @brief
     BodyNode* mParentBodyNode;
 
     /// @brief
     std::vector<BodyNode*> mChildBodyNodes;
+
+    /// @brief List of markers associated
+    std::vector<Marker*> mMarkers;
 
     /// @brief A list of dependent dof indices
     std::vector<int> mDependentDofIndexes;

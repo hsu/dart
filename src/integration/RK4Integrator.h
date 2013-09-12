@@ -57,9 +57,6 @@ public:
     // Documentation inherited.
     virtual void integrate(IntegrableSystem* system, double dt) const;
 
-    // Documentation inherited.
-//    virtual void integrate(dynamics::System* _system, double _dt) const;
-
 private:
     /// @brief
     mutable Eigen::VectorXd k1, k2, k3, k4;

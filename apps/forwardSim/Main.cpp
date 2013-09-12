@@ -1,4 +1,4 @@
-#include "common/Paths.h"
+#include "utils/Paths.h"
 #include "math/Helpers.h"
 #include "dynamics/Skeleton.h"
 #include "simulation/World.h"

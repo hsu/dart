@@ -13,9 +13,9 @@ foreach(APPDIR
     #ik
     #hybrid
     #hanging
-    #hardcodedDesign
+    hardcodedDesign
     #closedLoop
-    #drawRRT
+    drawRRT
     testBed
     #spheres
 	)

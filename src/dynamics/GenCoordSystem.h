@@ -35,8 +35,8 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DART_DYNAMICS_SYSTEM_H
-#define DART_DYNAMICS_SYSTEM_H
+#ifndef DART_DYNAMICS_GENCOORDSYSTEM_H
+#define DART_DYNAMICS_GENCOORDSYSTEM_H
 
 #include <vector>
 #include <Eigen/Dense>
@@ -57,16 +57,17 @@ public:
     virtual ~GenCoordSystem();
 
     /// @brief
-    int getDOF() const { return mGenCoords.size(); }
+    DEPRECATED int getNumDofs() const { return getDOF(); }
+    int getDOF() const;
 
     /// @brief
-    const std::vector<GenCoord*>& getGenCoords() const { return mGenCoords; }
+    const std::vector<GenCoord*>& getGenCoords() const;
 
     /// @brief
-    GenCoord* getDof(int _idx) const;
+    GenCoord* getGenCoord(int _idx) const;
 
     /// @brief
-    GenCoord* getDof(const std::string& _name) const;
+    GenCoord* getGenCoord(const std::string& _name) const;
 
     /// @brief Backup current state as initial state.
     void backupInitState();
@@ -118,7 +119,9 @@ private:
 
 };
 
+DEPRECATED typedef GenCoordSystem System;
+
 } // namespace dynamics
 } // namespace dart
 
-#endif // DART_DYNAMICS_SYSTEM_H
+#endif // DART_DYNAMICS_GENCOORDSYSTEM_H

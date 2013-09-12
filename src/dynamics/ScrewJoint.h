@@ -53,7 +53,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    ScrewJoint(const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
+    ScrewJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+               const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
                double _pitch = 0.1,
                const std::string& _name = "Screw joint");
 

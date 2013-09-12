@@ -61,7 +61,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    EulerJoint();
+    EulerJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+               const std::string& _name = "Euler joint");
 
     /// @brief
     virtual ~EulerJoint();

@@ -45,6 +45,7 @@
 #include "simulation/World.h"
 #include "dynamics/GenCoord.h"
 #include "dynamics/Skeleton.h"
+#include <flann/flann.hpp>
 
 using namespace std;
 using namespace Eigen;
@@ -62,7 +63,7 @@ RRT::RRT(World* world, Skeleton* robot, const std::vector<int> &dofs, const Vect
 	dofs(dofs),
 	ndim(dofs.size()),
 	stepSize(stepSize),
-	index(flann::KDTreeSingleIndexParams())
+	index(new flann::Index<flann::L2<double> >(flann::KDTreeSingleIndexParams()))
 {
 	// Reset the random number generator and add the given start configuration to the flann structure
 	srand(time(NULL));
@@ -76,7 +77,7 @@ RRT::RRT(World* world, dynamics::Skeleton* robot, const std::vector<int> &dofs, 
 	dofs(dofs),
 	ndim(dofs.size()),
 	stepSize(stepSize),
-	index(flann::KDTreeSingleIndexParams())
+	index(new flann::Index<flann::L2<double> >(flann::KDTreeSingleIndexParams()))
 {
 	// Reset the random number generator and add the given start configurations to the flann structure
 	srand(time(NULL));
@@ -160,9 +161,9 @@ int RRT::addNode(const VectorXd &qnew, int parentId) {
 	// Update the underlying flann structure (the kdtree)
 	unsigned int id = configVector.size() - 1;
 	if(id == 0) 
-		index.buildIndex(flann::Matrix<double>((double*)temp->data(), 1, temp->size()));
+		index->buildIndex(flann::Matrix<double>((double*)temp->data(), 1, temp->size()));
 	else 
-		index.addPoints(flann::Matrix<double>((double*)temp->data(), 1, temp->size()));
+		index->addPoints(flann::Matrix<double>((double*)temp->data(), 1, temp->size()));
 	
 	activeNode = id;
 	return id;
@@ -175,7 +176,7 @@ inline int RRT::getNearestNeighbor(const VectorXd &qsamp) {
 	const flann::Matrix<double> queryMatrix((double*)qsamp.data(), 1, qsamp.size());
 	flann::Matrix<int> nearestMatrix(&nearest, 1, 1);
 	flann::Matrix<double> distanceMatrix(flann::Matrix<double>(&distance, 1, 1));
-	index.knnSearch(queryMatrix, nearestMatrix, distanceMatrix, 1, 
+	index->knnSearch(queryMatrix, nearestMatrix, distanceMatrix, 1, 
 		flann::SearchParams(flann::FLANN_CHECKS_UNLIMITED));
 	activeNode = nearest;
 	return nearest;
@@ -194,7 +195,7 @@ VectorXd RRT::getRandomConfig() {
 	// configuration vectors (and returns ref to it)
 	VectorXd config(ndim);
 	for (int i = 0; i < ndim; ++i) {
-        config[i] = randomInRange(robot->getDof(dofs[i])->get_qMin(), robot->getDof(dofs[i])->get_qMax());
+        config[i] = randomInRange(robot->getGenCoord(dofs[i])->get_qMin(), robot->getGenCoord(dofs[i])->get_qMax());
 	}
 	return config;
 }

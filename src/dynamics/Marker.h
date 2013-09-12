@@ -41,62 +41,96 @@
 #include <Eigen/Dense>
 
 namespace dart {
+
 namespace renderer {
 class RenderInterface;
 }
-}
 
-namespace dart {
 namespace dynamics {
+
 #define MAX_MARKER_NAME 256
 
-class Dof;
 class BodyNode;
-class ShapeEllipsoid;
 
-class Marker {
+class Marker
+{
 public:
-    enum ConstraintType {
+    enum ConstraintType
+    {
         NO,
         HARD,
         SOFT
     };
     
-public:
-    Marker(const char* _name, Eigen::Vector3d& , BodyNode*, ConstraintType _type = NO);
-    virtual ~Marker(){}
+    /// @brief
+    Marker(const char* _name, Eigen::Vector3d& _offset, BodyNode* _node,
+           ConstraintType _type = NO);
 
-    void draw(renderer::RenderInterface* _ri = NULL, bool _offset = true, const Eigen::Vector4d& _color = Eigen::Vector4d::Identity(), bool _useDefaultColor = true) const;
+    /// @brief
+    virtual ~Marker();
 
+    /// @brief
+    void draw(renderer::RenderInterface* _ri = NULL, bool _offset = true,
+              const Eigen::Vector4d& _color = Eigen::Vector4d::Identity(),
+              bool _useDefaultColor = true) const;
+
+    /// @brief
     Eigen::Vector3d getWorldCoords(); ///< get the world coordinates of mOffset
 
-    inline Eigen::Vector3d getLocalCoords() const {return mOffset;}
-    inline void setLocalCoords(Eigen::Vector3d& _offset){mOffset = _offset;}
+    /// @brief
+    Eigen::Vector3d getLocalCoords() const;
 
-    inline int getSkelIndex() const{return mSkelIndex;}
-    inline void setSkelIndex(int _idx){mSkelIndex=_idx;}
+    /// @brief
+    void setLocalCoords(Eigen::Vector3d& _offset);
 
-    inline int getID() const {return mID;}
-    inline BodyNode* getNode() const {return mNode;}
-    inline const char* getName() const {return mName;}
+    /// @brief
+    int getSkelIndex() const;
+
+    /// @brief
+    void setSkelIndex(int _idx);
+
+    /// @brief
+    int getID() const;
+
+    /// @brief
+    BodyNode* getNode() const;
+
+    /// @brief
+    const char* getName() const;
 
     // useful for IK
-    inline ConstraintType getConstraintType() const {return mType;}
-    inline void setConstraintType(ConstraintType _type){mType = _type;}
+    /// @brief
+    ConstraintType getConstraintType() const;
+
+    /// @brief
+    void setConstraintType(ConstraintType _type);
     
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     
-    protected:
-        BodyNode* mNode;	///< body link associated with
-    Eigen::Vector3d mOffset;	///< local coordinates in the links
-    char mName[MAX_MARKER_NAME]; ///< name of this marker, max length 256 characters
-    int mSkelIndex;	///< position in the model class marker vector
-    ConstraintType mType; ///< type of constraint
+protected:
+    /// @brief body link associated with.
+    BodyNode* mNode;
+
+    /// @brief local coordinates in the links.
+    Eigen::Vector3d mOffset;
+
+    /// @brief name of this marker, max length 256 characters.
+    char mName[MAX_MARKER_NAME];
+
+    /// @brief position in the model class marker vector.
+    int mSkelIndex;
+
+    /// @brief type of constraint.
+    ConstraintType mType;
     
 private:
-    int mID; ///< a unique ID of this marker globally
-    static int msMarkerCount; ///< counts the number of markers globally
+    /// @brief a unique ID of this marker globally.
+    int mID;
+
+    /// @brief counts the number of markers globally.
+    static int msMarkerCount;
+
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 } // namespace kinematics

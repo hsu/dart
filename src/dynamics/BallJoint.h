@@ -53,7 +53,8 @@ public:
     //
     //--------------------------------------------------------------------------
     /// @brief
-    BallJoint(const std::string& _name = "Ball joint");
+    BallJoint(BodyNode* _parent = NULL, BodyNode* _child = NULL,
+              const std::string& _name = "Ball joint");
 
     /// @brief
     virtual ~BallJoint();

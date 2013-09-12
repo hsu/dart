@@ -41,7 +41,7 @@
 #include "dynamics/BodyNode.h"
 #include "dynamics/GenCoord.h"
 #include "dynamics/Joint.h"
-#include "dynamics/Skeleton.h"
+#include "dynamics/Marker.h"
 #include "dynamics/Skeleton.h"
 
 namespace dart {
@@ -102,7 +102,7 @@ void Skeleton::setJointLimitState(bool _s)
     mJointLimit = _s;
 }
 
-double Skeleton::getTotalMass() const
+double Skeleton::getMass() const
 {
     return mTotalMass;
 }
@@ -145,6 +145,11 @@ void Skeleton::initDynamics()
         mTotalMass += getBodyNode(i)->getMass();
 }
 
+void Skeleton::addNode(BodyNode* _body, bool _addParentJoint)
+{
+    addBodyNode(_body, _addParentJoint);
+}
+
 void Skeleton::addBodyNode(BodyNode* _body, bool _addParentJoint)
 {
     assert(_body != NULL);
@@ -179,6 +184,11 @@ void Skeleton::setRootBodyNode(BodyNode* _body)
     mRootBodyNode = _body;
 }
 
+int Skeleton::getNumNodes() const
+{
+    return mBodyNodes.size();
+}
+
 int Skeleton::getNumBodyNodes() const
 {
     return mBodyNodes.size();
@@ -194,9 +204,19 @@ BodyNode* Skeleton::getRoot()
     return mRootBodyNode;
 }
 
+BodyNode* Skeleton::getNode(int _idx) const
+{
+    return getBodyNode(_idx);
+}
+
 BodyNode* Skeleton::getBodyNode(int _idx) const
 {
     return mBodyNodes[_idx];
+}
+
+BodyNode* Skeleton::getNode(const char* const _name) const
+{
+    findBodyNode(_name);
 }
 
 BodyNode* Skeleton::findBodyNode(const std::string& _name) const
@@ -211,6 +231,104 @@ BodyNode* Skeleton::findBodyNode(const std::string& _name) const
     }
 
     return NULL;
+}
+
+int Skeleton::getBodyNodeIndex(const std::string& _name) const
+{
+    const int nNodes = getNumBodyNodes();
+
+    for(int i = 0; i < nNodes; i++)
+    {
+        BodyNode* node = getBodyNode(i);
+
+        if (_name == node->getName())
+            return i;
+    }
+
+    return -1;
+}
+
+Joint*Skeleton::getJoint(int _idx) const
+{
+    return mJoints[_idx];
+}
+
+Joint*Skeleton::getJoint(const char* const _name) const
+{
+    return findJoint(_name);
+}
+
+Joint* Skeleton::findJoint(const std::string& _name) const
+{
+    assert(!_name.empty());
+
+    for (std::vector<Joint*>::const_iterator itrJoint = mJoints.begin();
+         itrJoint != mJoints.end();
+         ++itrJoint)
+    {
+        if ((*itrJoint)->getName() == _name)
+            return *itrJoint;
+    }
+
+    return NULL;
+}
+
+int Skeleton::getJointIndex(const std::string& _name) const
+{
+    const int nJoints = getNumJoints();
+
+    for(int i = 0; i < nJoints; i++)
+    {
+        Joint* node = getJoint(i);
+
+        if (_name == node->getName())
+            return i;
+    }
+
+    return -1;
+}
+
+void Skeleton::addMarker(Marker* _h)
+{
+    mMarkers.push_back(_h);
+    _h->setSkelIndex(mMarkers.size()-1);
+    BodyNode *body = _h->getNode();
+    body->addMarker(_h);
+}
+
+int Skeleton::getNumMarkers() const
+{
+    return mMarkers.size();
+}
+
+Marker* Skeleton::getMarker(int _i)
+{
+    return mMarkers[_i];
+}
+
+Eigen::VectorXd Skeleton::getConfig(std::vector<int> _id)
+{
+    Eigen::VectorXd dofs(_id.size());
+
+    for(unsigned int i = 0; i < _id.size(); i++)
+        dofs[i] = mGenCoords[_id[i]]->get_q();
+
+    return dofs;
+}
+
+void Skeleton::setConfig(std::vector<int> _id, Eigen::VectorXd _vals,
+                         bool _calcTrans, bool _calcDeriv)
+{
+    for( unsigned int i = 0; i < _id.size(); i++ )
+        mGenCoords[_id[i]]->set_q(_vals(i));
+
+    if (_calcTrans)
+    {
+        if (_calcDeriv)
+            updateForwardKinematics(true, false);
+        else
+            updateForwardKinematics(false, false);
+    }
 }
 
 void Skeleton::setPose(const Eigen::VectorXd& _pose,
@@ -284,7 +402,6 @@ void Skeleton::initKinematics()
     mRootBodyNode = mBodyNodes[0];
     mToRootBody = math::Inv(mFrame) * mRootBodyNode->getWorldInvTransform();
 
-    // calculate mass
     // init the dependsOnDof stucture for each bodylink
     for(int i = 0; i < getNumBodyNodes(); i++)
     {
@@ -292,6 +409,8 @@ void Skeleton::initKinematics()
         mBodyNodes.at(i)->setDependDofList();
         mBodyNodes.at(i)->init();
     }
+
+    updateForwardKinematics();
 }
 
 void Skeleton::updateForwardKinematics(bool _firstDerivative,
@@ -306,6 +425,13 @@ void Skeleton::draw(renderer::RenderInterface* _ri,
                     bool _useDefaultColor) const
 {
     mRootBodyNode->draw(_ri, _color, _useDefaultColor);
+}
+
+void Skeleton::drawMarkers(renderer::RenderInterface* _ri,
+                           const Eigen::Vector4d& _color,
+                           bool _useDefaultColor) const
+{
+    mRootBodyNode->drawMarkers(_ri, _color, _useDefaultColor);
 }
 
 void Skeleton::_updateJointKinematics(bool _firstDerivative,
@@ -340,7 +466,7 @@ void Skeleton::_updateBodyForwardKinematics(bool _firstDerivative,
     mFrame = mRootBodyNode->getWorldTransform() * math::Inv(mToRootBody);
 }
 
-void Skeleton::computeInverseDynamics(const Eigen::Vector3d& _gravity,
+void Skeleton::computeInverseDynamicsLinear(const Eigen::Vector3d& _gravity,
                                       bool _computeJacobian,
                                       bool _computeJacobianDeriv,
                                       bool _withExternalForces,
@@ -370,6 +496,48 @@ void Skeleton::computeInverseDynamics(const Eigen::Vector3d& _gravity,
     }
 }
 
+Eigen::VectorXd Skeleton::computeInverseDynamicsLinear(
+        const Eigen::Vector3d& _gravity,
+        const Eigen::VectorXd* _qdot,
+        const Eigen::VectorXd* _qdotdot,
+        bool _computeJacobians,
+        bool _withExternalForces,
+        bool _withDampingForces)
+{
+    int n = getDOF();
+
+    if (_qdot == NULL)
+        set_dq(Eigen::VectorXd::Zero(n));
+
+    if (_qdotdot == NULL)
+        set_ddq(Eigen::VectorXd::Zero(n));
+
+    _updateJointKinematics();
+
+    // Forward recursion
+    for (std::vector<dynamics::BodyNode*>::iterator itrBody = mBodyNodes.begin();
+         itrBody != mBodyNodes.end();
+         ++itrBody) {
+        (*itrBody)->updateTransformation();
+        (*itrBody)->updateVelocity(_computeJacobians);
+        (*itrBody)->updateEta();
+        (*itrBody)->updateAcceleration(_computeJacobians);
+    }
+
+    // Backward recursion
+    for (std::vector<dynamics::BodyNode*>::reverse_iterator ritrBody
+         = mBodyNodes.rbegin();
+         ritrBody != mBodyNodes.rend();
+         ++ritrBody)
+    {
+        (*ritrBody)->updateBodyForce(_gravity,
+                                     _withExternalForces);
+        (*ritrBody)->updateGeneralizedForce(_withDampingForces);
+    }
+
+    return get_tau();
+}
+
 void Skeleton::evalExternalForces()
 {
     updateExternalForces();
@@ -397,7 +565,7 @@ void Skeleton::updateDampingForces()
         Eigen::VectorXd jointDampingForce = (*itr)->getDampingForces();
         for (int i = 0; i < jointDampingForce.size(); i++)
         {
-            mDampingForce((*itr)->getDof(i)->getSkelIndex()) =
+            mDampingForce((*itr)->getGenCoord(i)->getSkelIndex()) =
                     jointDampingForce(i);
         }
     }
@@ -435,7 +603,7 @@ void Skeleton::computeEquationsOfMotionID(
     set_ddq(Eigen::VectorXd::Zero(n));
 
     // M(q) * ddq + b(q,dq) = tau
-    computeInverseDynamics(_gravity, true);
+    computeInverseDynamicsLinear(_gravity, true);
     mCg = get_tau();
 
     // Calcualtion mass matrix, M
@@ -494,7 +662,7 @@ void Skeleton::computeForwardDynamicsID2(
     mM = Eigen::MatrixXd::Zero(n,n);
 
     // M(q) * ddq + b(q,dq) = tau
-    computeInverseDynamics(_gravity);
+    computeInverseDynamicsLinear(_gravity);
     Eigen::VectorXd b = get_tau();
     mCg = b;
 
@@ -504,7 +672,7 @@ void Skeleton::computeForwardDynamicsID2(
         Eigen::VectorXd basis = Eigen::VectorXd::Zero(n);
         basis(i) = 1;
         set_ddq(basis);
-        computeInverseDynamics(_gravity);
+        computeInverseDynamicsLinear(_gravity);
         mM.col(i) = get_tau() - b;
     }
 
@@ -588,6 +756,26 @@ Eigen::VectorXd Skeleton::getConstraintForces() const
 void Skeleton::setInternalForces(const Eigen::VectorXd& _forces)
 {
     set_tau(_forces);
+}
+
+void Skeleton::setMinInternalForces(Eigen::VectorXd _minForces)
+{
+    set_tauMin(_minForces);
+}
+
+Eigen::VectorXd Skeleton::getMinInternalForces() const
+{
+    return get_tauMin();
+}
+
+void Skeleton::setMaxInternalForces(Eigen::VectorXd _maxForces)
+{
+    set_tauMax(_maxForces);
+}
+
+Eigen::VectorXd Skeleton::getMaxInternalForces() const
+{
+    return get_tauMax();
 }
 
 void Skeleton::clearInternalForces()
@@ -675,38 +863,6 @@ Eigen::Vector6d Skeleton::getMomentumCOM()
     // TODO: Not implemented.
 
     return M;
-}
-
-Eigen::VectorXd Skeleton::getConfig(std::vector<int> _id)
-{
-    Eigen::VectorXd dofs(_id.size());
-
-    for(unsigned int i = 0; i < _id.size(); i++)
-        dofs[i] = mGenCoords[_id[i]]->get_q();
-
-    return dofs;
-}
-
-void Skeleton::setConfig(std::vector<int> _id, Eigen::VectorXd _vals,
-                         bool _calcTrans, bool _calcDeriv)
-{
-    for( unsigned int i = 0; i < _id.size(); i++ )
-        mGenCoords[_id[i]]->set_q(_vals(i));
-
-    // TODO: Only do the necessary updates
-    if (_calcTrans)
-        for (int i = 0; i < getNumBodyNodes(); i++)
-            mBodyNodes.at(i)->updateTransformation();
-
-    if (_calcDeriv)
-    {
-        for (std::vector<Joint*>::iterator itrJoint = mJoints.begin();
-             itrJoint != mJoints.end(); ++itrJoint)
-            (*itrJoint)->updateKinematics(true, false);
-
-        for (int i = 0; i < getNumBodyNodes(); i++)
-            mBodyNodes.at(i)->updateVelocity();
-    }
 }
 
 } // namespace dynamics
